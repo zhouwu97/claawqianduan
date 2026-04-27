@@ -170,6 +170,8 @@
                 <span v-for="item in configdata.statement">
                   {{ item }}<br>
                 </span>
+                <br>
+                <span>灵感源于 <a href="https://github.com/leleo886" target="_blank" style="color: inherit;">@GitHub leleo886</a></span>
             </p>
           </div>
         </v-card>

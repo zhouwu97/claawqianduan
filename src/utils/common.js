@@ -31,3 +31,7 @@ export function getFormattedDate(currentDate){
 
    return `${year} 年 ${month} 月 ${day} 日 ${weekday}`;
 }
+
+export function dataConsole(){
+   console.log('%c周周的个人主页', 'color: #FF89B5; font-size: 20px; font-weight: bold;');
+}

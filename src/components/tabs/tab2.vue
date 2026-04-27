@@ -157,7 +157,7 @@ export default {
       }
       this.loading2 = true;
       setTimeout(() => {
-        this.loading = false;
+        this.loading2 = false;
         this.setCookie('leleodatabackground', this.background, 0.005);
         location.reload();
       }, 800);
@@ -165,7 +165,7 @@ export default {
     redefault() {
       this.loading1 = true;
       setTimeout(() => {
-        this.loading = false;
+        this.loading1 = false;
         this.eraseCookie('leleodatabackground');
         location.reload();
       }, 800);

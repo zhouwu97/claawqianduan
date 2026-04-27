@@ -107,7 +107,7 @@ export default {
     submitdata() {
       this.loading2 = true;
       setTimeout(() => {
-        this.loading = false;
+        this.loading2 = false;
         this.setCookie('leleodata', {color:this.color,brightness:String(this.brightness),blur:String(this.blur)},0.005);
         location.reload();
       }, 800);
@@ -115,7 +115,7 @@ export default {
     redefault() {
       this.loading1 = true;
       setTimeout(() => {
-        this.loading = false;
+        this.loading1 = false;
         this.eraseCookie('leleodata');
         location.reload();
       }, 800);

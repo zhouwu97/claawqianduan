@@ -83,6 +83,7 @@ const config = {
 		{ go: "📚 前往", img: "/img/illust_132964987_20260420_102509.jpg", title: "读书笔记", subtitle: "轻小说 & 技术书", text: "阅读是灵魂的避难所。", url: "https://github.com/zhouwu97", show: false },
 		{ go: "🎵 前往", img: "/img/illust_132964987_20260420_102511(1).jpg", title: "歌单分享", subtitle: "ACG音乐推荐", text: "耳机里的世界，是另一个次元。", url: "https://github.com/zhouwu97", show: false },
 		{ go: "🎮 前往", img: "/img/illust_132964987_20260420_102513.jpg", title: "游戏记录", subtitle: "Steam & Switch", text: "通关记录和游戏心得分享。", url: "https://github.com/zhouwu97", show: false },
+		{ go: "🤲 求求了", img: "/img/mingfeng.png", title: "赛博要饭", subtitle: "求求大家注册", text: "求求大家注册并且实名一下吧！", url: "https://cloud.siliconflow.cn/i/gNjt9kwg", show: false },
 	],
 
 	statement: ["© 2025 周周 | All Rights Reserved"],

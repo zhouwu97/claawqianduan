@@ -16,6 +16,10 @@
 - 设置弹窗（个性化颜色/亮度/模糊、壁纸选择、音乐播放器）
 - 首次引导 tour（driver.js）
 
+## 演示地址
+
+[在线演示](https://zhouwu.ccwu.cc)
+
 ## 技术栈
 
 - Vue 3.5
@@ -29,7 +33,7 @@
 
 ### 一、域名申请
 
-本项目域名申请于 **dnshe**（https://www.dnshe.com/）
+本项目域名申请于 [dnshe](https://www.dnshe.com/)
 
 1. 访问 dnshe 网站并注册账号
 2. 搜索你想要的域名并申请
@@ -37,7 +41,7 @@
 
 ### 二、域名托管
 
-本项目托管于 **Cloudflare**（https://www.cloudflare.com/zh-cn/）
+本项目托管于 [Cloudflare](https://www.cloudflare.com/zh-cn/)
 
 1. 将 dnshe 申请的域名接入 Cloudflare
 2. 在 Cloudflare 控制台管理 DNS 解析
@@ -46,13 +50,29 @@
 
 ### 三、项目部署
 
-#### 方法一：本地开发
+#### 方法一：本地运行
+
+1. 克隆仓库：
 
 ```bash
-# 安装依赖
-npm install
+git clone https://github.com/zhouwu97/claawqianduan.git
+```
 
-# 启动开发服务器
+2. 进入项目目录：
+
+```bash
+cd claawqianduan
+```
+
+3. 安装依赖：
+
+```bash
+npm install
+```
+
+4. 启动开发服务器：
+
+```bash
 npm run dev
 ```
 
@@ -65,12 +85,41 @@ npm run build
 
 构建完成后，`dist` 目录包含所有静态文件，可上传至任何静态托管服务。
 
-#### 方法三：使用 Cloudflare Pages
+#### 方法三：Cloudflare Pages 在线部署
 
-1. 将代码推送到 GitHub
-2. 在 Cloudflare Pages 中连接仓库
-3. 设置构建命令：`npm run build`
-4. 设置输出目录：`dist`
+> 无需服务器，对站长友好（需要有 Cloudflare 以及 Github 账号）
+
+1. Fork 本项目到自己的账号下
+
+2. 登录 Cloudflare 并点击左侧栏目中"计算(Workers)"底下的"Workers 和 Pages"
+
+3. 点击右上角"创建"，选择"Pages"，点击"导入现有 Git 存储库"右侧的"开始使用"
+
+4. 点击"连接 Github"，并登录你的 Github 账号
+
+5. 选择项目存储库（如果你没有更名那应该是"claawqianduan"）并开始设置，在接下来的页面中框架预设选择`Vue`（如果不选择，你的网站会访问为空白），点击保存并部署
+
+此时，项目已经部署完成，可以直接点击上方链接预览
+
+如果需要绑定域名，可以点击"添加自定义域"、"设置自定义域"并填入目标域，点击继续
+
+> 你的域名托管在 Cloudflare，直接点击"激活域"就可以完成
+
+> 你的域名没有托管在 Cloudflare，根据指引添加 CNAME 记录即可
+
+## 修改配置
+
+### 方法1. 修改配置文件
+
+自定义数据文件为项目 src 目录下面的 `config.js`，然后就是代码的拉取、修改上传。如果部署方式为 Cloudflare Pages，直接在 Github 修改后 Commit 即可自动部署
+
+### 方法2. 在线修改环境变量（Cloudflare）
+
+> (1). 到你的 Pages 项目，点击"设置"，找到"变量和机密"点击右侧"添加"
+
+> (2). 要求填入"变量名称"为`VITE_CONFIG`，"值"根据 config.js 中的配置内容进行 JSON 格式化后填入
+
+> (3). 点击"部署"，找到左侧带绿条的那个点击右侧三个点"重试部署"。等待部署完成即可
 
 ## 配置说明
 

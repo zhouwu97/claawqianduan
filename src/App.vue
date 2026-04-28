@@ -22,6 +22,21 @@
         @mouseleave="collapseSwitch"
       ></v-switch>
     </div>
+
+    <div class="mini-player" v-if="musicinfo && musicinfo.length > 0">
+      <v-btn icon size="small" variant="text" @click="togglePlay">
+        <v-icon>{{ isPlaying ? 'mdi-pause' : 'mdi-play' }}</v-icon>
+      </v-btn>
+      <div class="mini-player-info" @click="dialog1 = true; tab = 'tab-3'">
+        <div class="mini-player-title">{{ currentSong?.title || '未知歌曲' }}</div>
+        <div class="mini-player-author">{{ currentSong?.author || '未知作者' }}</div>
+      </div>
+      <v-btn icon size="x-small" variant="text" @click="nextTrack">
+        <v-icon size="18">mdi-skip-next</v-icon>
+      </v-btn>
+    </div>
+
+    <audio ref="audioPlayer" @waiting="onWaiting" @canplay="onCanPlay" @ended="nextTrack"></audio>
     
     <div v-show="!isloading && !isClearScreen" :style="xs||sm?{'overflow-y': 'auto','overflow-x': 'hidden'}:{}">
         <v-row>

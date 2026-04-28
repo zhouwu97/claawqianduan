@@ -80,7 +80,7 @@ const config = {
 
 	projectcards: [
 		{ go: "🏠 前往", img: "/img/illust_132964987_20260420_102507.jpg", title: "洛谷", subtitle: "刷题记录", text: "算法竞赛题目练习与题解。", url: "https://www.luogu.com.cn/user/1993718", show: false },
-		{ go: "📚 前往", img: "/img/illust_132964987_20260420_102509.jpg", title: "读书笔记", subtitle: "轻小说 & 技术书", text: "阅读是灵魂的避难所。", url: "https://github.com/zhouwu97", show: false },
+		{ go: "💎 前往", img: "/img/illust_132964987_20260420_102509.jpg", title: "宝藏网站", subtitle: "实用工具 & 资源导航", text: "发现互联网上的宝藏资源。", url: "https://github.com/zhouwu97", show: false },
 		{ go: "🎵 前往", img: "/img/illust_132964987_20260420_102511(1).jpg", title: "歌单分享", subtitle: "self 能来个腐竹吗", text: "网易云音乐歌单分享", url: "https://music.163.com/m/playlist?id=12440761642&creatorId=4940956665", show: false },
 		{ go: "🎮 前往", img: "/img/illust_132964987_20260420_102513.jpg", title: "游戏记录", subtitle: "Steam & Switch", text: "通关记录和游戏心得分享。", url: "https://github.com/zhouwu97", show: false },
 		{ go: "🤲 求求了", img: "/img/illust_132964987_20260420_102514.jpg", title: "赛博要饭", subtitle: "求求大家注册", text: "求求大家注册并且实名一下吧！", url: "https://cloud.siliconflow.cn/i/gNjt9kwg", show: false },

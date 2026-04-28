@@ -53,10 +53,8 @@
       <v-container>
         <v-row>
 <v-col v-for="(item,key) in projectcards" cols="6" md="4" lg="3" :style="xs?{'padding': '6px'}:{}">
-            <v-card class="project-card">
-              <a :href="item.url" target="_blank">
-                <v-img class="project-img" aspect-ratio="1.7778" :src="item.img" cover :style="{ opacity: 0.8 }" loading="lazy"></v-img>
-              </a>
+            <v-card class="project-card" @click="openCardDialog(item)">
+              <v-img class="project-img" aspect-ratio="1.7778" :src="item.img" cover :style="{ opacity: 0.8 }" loading="lazy"></v-img>
               <v-card-title :style="xs?{'font-size': '0.9rem','padding': '0.15rem 0.5rem'}:{'font-size': '1.1rem','padding':'0.2rem 0.8rem'}">{{item.title}}</v-card-title>
               <v-card-subtitle :style="xs?{'font-size': '0.6rem','padding': '0.1rem 0.5rem'}:{'font-size': '0.8rem','padding': '0.15rem 0.6rem'}">{{ item.subtitle }}</v-card-subtitle>
             </v-card>
@@ -64,6 +62,28 @@
         </v-row>
       </v-container>
     </div>
+
+    <v-dialog v-model="cardDialog" max-width="500">
+      <v-card>
+        <v-card-title>{{ selectedCard?.title }}</v-card-title>
+        <v-card-text>
+          <div class="text-body-1 mb-3">{{ selectedCard?.text }}</div>
+          <div class="d-flex align-center gap-2">
+            <v-text-field v-model="selectedCardUrl" readonly dense variant="outlined" hide-details></v-text-field>
+            <v-btn icon variant="tonal" @click="copyUrl">
+              <v-icon>mdi-content-copy</v-icon>
+            </v-btn>
+            <v-btn icon variant="tonal" :href="selectedCard?.url" target="_blank">
+              <v-icon>mdi-open-in-new</v-icon>
+            </v-btn>
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn variant="text" @click="cardDialog = false">关闭</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -85,7 +105,10 @@ export default {
         { title: '百度', value: 'baidu' },
         { title: 'Yandex', value: 'yandex' },
         { title: 'DuckDuckGo', value: 'duckduckgo' },
-      ]
+      ],
+      cardDialog: false,
+      selectedCard: null,
+      selectedCardUrl: '',
     }
   },
   setup() {
@@ -99,6 +122,14 @@ export default {
     }
   },
   methods: {
+    openCardDialog(item) {
+      this.selectedCard = item;
+      this.selectedCardUrl = item.url;
+      this.cardDialog = true;
+    },
+    copyUrl() {
+      navigator.clipboard.writeText(this.selectedCardUrl);
+    },
     projectcardsShow(key){
       for(let i = 0;i < this.projectcards.length;i++){
         if(i != key){

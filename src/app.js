@@ -263,7 +263,7 @@ export default {
     async getMusicInfo(){
       this.musicinfoLoading = true;
       try {
-        const response = await fetch(`https://meting-api.onrender.com/api?server=${this.configdata.musicPlayer.server}&type=${this.configdata.musicPlayer.type}&id=${this.configdata.musicPlayer.id}`
+        const response = await fetch(`https://nominalistically-subpeduncled-alexandria.ngrok-free.app/api?server=${this.configdata.musicPlayer.server}&type=${this.configdata.musicPlayer.type}&id=${this.configdata.musicPlayer.id}`
         );
         if (!response.ok) {
           throw new Error('网络请求失败');
@@ -306,7 +306,7 @@ export default {
     },
     updateAudio() {
       if(!this.currentSong) return;
-      this.audioPlayer.src = `https://meting-api.onrender.com${this.currentSong.url}`;
+      this.audioPlayer.src = `https://nominalistically-subpeduncled-alexandria.ngrok-free.app${this.currentSong.url}`;
       if(this.$refs.audiotitle) this.$refs.audiotitle.innerText = this.currentSong.title;
       if(this.$refs.audioauthor) this.$refs.audioauthor.innerText = this.currentSong.author;
       this.isPlaying = true;

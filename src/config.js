@@ -78,9 +78,47 @@ const config = {
 		videoMobile: [],
 	},
 
+	treasurewebs: [
+		{
+			name: "沈理校园 SYLUlive",
+			desc: "校园互助社交应用 - 发现身边有趣的人与事",
+			url: "https://github.com/zhouwu97/SYLUlive",
+			icon: "mdi-school",
+			color: "#FF69B4"
+		},
+		{
+			name: "洛谷 Luogu",
+			desc: "算法竞赛题目练习与题解 - 程序员的练兵场",
+			url: "https://www.luogu.com.cn/",
+			icon: "mdi-sword",
+			color: "#00BFFF"
+		},
+		{
+			name: "SmallPDF",
+			desc: "免费在线PDF工具箱 - PDF转JPG、压缩PDF、编辑PDF",
+			url: "https://smallpdf.com/cn/pdf-to-jpg",
+			icon: "mdi-file-pdf-box",
+			color: "#FF6B6B"
+		},
+		{
+			name: "LeetCode",
+			desc: "面试算法练习平台 - 对症下药攻克面试难题",
+			url: "https://leetcode.cn/",
+			icon: "mdi-code-braces",
+			color: "#FFD93D"
+		},
+		{
+			name: "The Pirate Bay",
+			desc: "海盗湾 - 银河系最强大的BitTorrent网站",
+			url: "https://thepiratebay.org/",
+			icon: "mdi-pirate",
+			color: "#6BCB77"
+		},
+	],
+
 	projectcards: [
 		{ go: "🏠 前往", img: "/img/illust_132964987_20260420_102507.jpg", title: "洛谷", subtitle: "刷题记录", text: "算法竞赛题目练习与题解。", url: "https://www.luogu.com.cn/user/1993718", show: false },
-		{ go: "💎 前往", img: "/img/illust_132964987_20260420_102509.jpg", title: "宝藏网站", subtitle: "实用工具 & 资源导航", text: "发现互联网上的宝藏资源。", url: "https://github.com/zhouwu97", show: false },
+		{ go: "💎 前往", img: "/img/illust_132964987_20260420_102509.jpg", title: "宝藏网站", subtitle: "实用工具 & 资源导航", text: "发现互联网上的宝藏资源。", url: "treasure", show: false },
 		{ go: "🎵 前往", img: "/img/illust_132964987_20260420_102511(1).jpg", title: "歌单分享", subtitle: "self 能来个腐竹吗", text: "网易云音乐歌单分享", url: "https://music.163.com/m/playlist?id=12440761642&creatorId=4940956665", show: false },
 		{ go: "🎮 前往", img: "/img/illust_132964987_20260420_102513.jpg", title: "游戏记录", subtitle: "Steam & Switch", text: "通关记录和游戏心得分享。", url: "https://github.com/zhouwu97", show: false },
 		{ go: "🤲 求求了", img: "/img/illust_132964987_20260420_102514.jpg", title: "赛博要饭", subtitle: "求求大家注册", text: "求求大家注册并且实名一下吧！", url: "https://cloud.siliconflow.cn/i/gNjt9kwg", show: false },

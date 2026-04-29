@@ -217,9 +217,14 @@ export default {
   },
   methods: {
     openCardDialog(item) {
-      this.selectedCard = item;
-      this.selectedCardUrl = item.url;
-      this.cardDialog = true;
+      // 宝藏网站保留弹窗，其他直接跳转
+      if (item.url === 'treasure') {
+        this.selectedCard = item;
+        this.selectedCardUrl = item.url;
+        this.cardDialog = true;
+      } else {
+        window.open(item.url, '_blank');
+      }
     },
     copyUrl() {
       navigator.clipboard.writeText(this.selectedCardUrl);

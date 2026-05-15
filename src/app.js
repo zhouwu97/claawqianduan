@@ -263,7 +263,7 @@ export default {
     async getMusicInfo(){
       this.musicinfoLoading = true;
       try {
-const response = await fetch(`http://101.42.27.44:3000/api?server=${this.configdata.musicPlayer.server}&type=${this.configdata.musicPlayer.type}&id=${this.configdata.musicPlayer.id}`
+const response = await fetch(`https://music.zhouwu.ccwu.cc/api?server=${this.configdata.musicPlayer.server}&type=${this.configdata.musicPlayer.type}&id=${this.configdata.musicPlayer.id}`
         );
         if (!response.ok) {
           throw new Error('网络请求失败');
@@ -306,7 +306,7 @@ const response = await fetch(`http://101.42.27.44:3000/api?server=${this.configd
     },
     updateAudio() {
       if(!this.currentSong) return;
-this.audioPlayer.src = `http://101.42.27.44:3000${this.currentSong.url}`;
+this.audioPlayer.src = `https://music.zhouwu.ccwu.cc${this.currentSong.url}`;
       if(this.$refs.audiotitle) this.$refs.audiotitle.innerText = this.currentSong.title;
       if(this.$refs.audioauthor) this.$refs.audioauthor.innerText = this.currentSong.author;
       this.isPlaying = true;

@@ -5,26 +5,13 @@
    - 普通 UI 动画 <= 300ms
    - button :active scale(.97)
    - card hover 只允许 translateY(-2~-3px)
-   - 图片 hover scale 不超过 1.025
+   - 图片 hover scale 不超过 1.02
+   - 不添加无意义 floating/bounce/stagger
    ============================================ */
 
-/* 页面首次进入：只做一次，可稍微漂亮 */
-.shell {
-  animation: shellIn 0.65s var(--ease-out) both;
-}
-@keyframes shellIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(0.992);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-/* Drawer：240ms cubic-bezier(.32,.72,0,1)（Vuetify drawer 过渡自定义） */
-.v-navigation-drawer {
+/* 抽屉 / bottom sheet：240-320ms */
+.v-navigation-drawer,
+.v-bottom-sheet__content {
   transition-duration: var(--duration-panel);
 }
 

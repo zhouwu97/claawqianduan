@@ -51,7 +51,7 @@ export default {
 
     const name = computed(() => props.configdata.name || '周周')
     const location = computed(() => props.configdata.hero?.location || 'Shenyang')
-    const tags = computed(() => (props.configdata.tags || []).slice(0, 8))
+    const tags = computed(() => (props.configdata.tags || []).slice(0, 5))
     const socials = computed(() => props.configdata.socialPlatformIcons || [])
     const githubUrl = computed(() => {
       const gh = (props.configdata.socialPlatformIcons || []).find(i => (i.icon || '').includes('github'))

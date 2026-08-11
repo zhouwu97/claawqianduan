@@ -23,8 +23,8 @@
       ></v-switch>
     </div>
 
-    <div class="shell" v-show="!isloading && !isClearScreen">
-      <aside class="sidebar">
+    <div class="layout" v-show="!isloading && !isClearScreen">
+      <aside class="rail">
         <ProfileSidebar
           :configdata="configdata"
           :current-song="currentSong"
@@ -39,25 +39,9 @@
         />
       </aside>
 
-      <main class="main">
-        <header class="topbar">
-          <div class="breadcrumb">
-            <span class="mobile-keep">zhouzhou.cc</span><span class="dot-sep"></span><b>Home</b><span>/</span><span>desktop concept</span>
-          </div>
-          <div class="quick-actions">
-            <button class="icon-btn" @click="copyHome" aria-label="复制主页">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>
-              <span>复制主页</span>
-            </button>
-            <a class="icon-btn" :href="githubUrl" target="_blank" rel="noreferrer" aria-label="GitHub">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 18c-4.5 1.4-4.5-2.5-6-3m12 6v-3.5c0-1 .1-1.5-.5-2 3-.35 6-1.5 6-6.5a5 5 0 0 0-1.35-3.5A4.7 4.7 0 0 0 19 2s-1.05-.35-4 1.35a13.4 13.4 0 0 0-6 0C6.05 1.65 5 2 5 2a4.7 4.7 0 0 0-.15 3.5A5 5 0 0 0 3.5 9c0 5 3 6.15 6 6.5-.5.45-.65 1-.55 2V21"/></svg>
-              <span>GitHub</span>
-            </a>
-          </div>
-        </header>
-
+      <main class="main-area">
         <div class="content">
-          <HeroIntro :hero-data="heroData" :formatted-time="formattedTime" :formatted-date-short="formattedDateShort" @scroll-to="scrollToSection" />
+          <HeroIntro :hero-data="heroData" :formatted-time="formattedTime" :formatted-date-short="formattedDateShort" />
 
           <div class="search-wrap">
             <SearchBar />
@@ -65,15 +49,14 @@
 
           <section id="projects">
             <div class="section-head">
-              <div><h3>项目与收藏</h3><p>保留原站内容，但重新做视觉优先级。</p></div>
-              <a class="section-link" :href="githubUrl" target="_blank" rel="noreferrer">全部 <span>↗</span></a>
+              <div><h3>项目</h3><p>在做的东西，和常去的地方。</p></div>
             </div>
             <ProjectShowcase :projects="displayProjects" :configdata="configdata" @open-treasure="treasureOpen = true" />
           </section>
 
           <section id="skills">
             <div class="section-head">
-              <div><h3>技能与近况</h3><p>比雷达图更直接，也更适合桌面端快速扫读。</p></div>
+              <div><h3>技能与近况</h3><p>常用技术栈，和最近在做的事。</p></div>
             </div>
             <div class="utility-grid">
               <SkillsOverview :skills="skillList" />
@@ -83,7 +66,7 @@
 
           <footer class="footer">
             <div>© {{ year }} <b>{{ siteName }}</b> · {{ siteDomain }}</div>
-            <div>Made with less glass, fewer cards, better hierarchy.</div>
+            <div>写代码，也写点生活。</div>
           </footer>
         </div>
       </main>
@@ -103,13 +86,11 @@
       @cancel="dialog1 = false" />
 
     <AboutDialog v-model="dialog2" :configdata="configdata" />
-
-    <div class="toast" :class="{ show: toastMsg }">{{ toastMsg }}</div>
   </v-app>
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useDisplay } from 'vuetify'
 import loader from '../components/loader.vue'
 import ProfileSidebar from '../components/profile/ProfileSidebar.vue'
@@ -140,10 +121,8 @@ const dialog2 = ref(false)
 const tab = ref(null)
 const isExpanded = ref(false)
 const treasureOpen = ref(false)
-const toastMsg = ref('')
 const audioEl = ref(null)
 const videoEl = ref(null)
-let toastTimer = null
 
 const {
   musicinfo, musicinfoLoading, playlistIndex, isPlaying, audioLoading, lyrics, currentSong,
@@ -165,9 +144,11 @@ const githubUrl = computed(() => {
 const heroData = computed(() => {
   const cfg = configdata.value
   return {
+    name: cfg.name || '周周',
     title: cfg.welcometitle || "Hi, I'm 周周",
-    intro: cfg.hero?.intro || '欢迎来到我的小世界。',
-    copy: cfg.hero?.description || '写代码、刷题、做项目，也会追番、听歌和收集一些奇奇怪怪的网站。',
+    intro: cfg.hero?.intro || '写点代码，也做些真正想用的东西。',
+    description: cfg.hero?.description || '最近主要折腾沈理校园、算法，还有一些乱七八糟的小项目。',
+    tagline: cfg.hero?.tagline || '沈阳理工大学 · 计算机 / 开发 / 二次元',
     status: cfg.hero?.status || '大概率还没睡',
     quote: cfg.hero?.quote || '生活不止眼前的代码，还有远方的番剧和奶茶。',
     github: githubUrl.value,
@@ -210,23 +191,8 @@ const displayProjects = computed(() => {
 
 /* ---------- 交互 ---------- */
 function scrollToSection(id) {
-  const target = id === 'top' ? document.querySelector('.main') : document.getElementById(id)
+  const target = id === 'top' ? document.querySelector('.main-area') : document.getElementById(id)
   if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' })
-}
-
-function showToast(msg) {
-  toastMsg.value = msg
-  clearTimeout(toastTimer)
-  toastTimer = setTimeout(() => { toastMsg.value = '' }, 1600)
-}
-
-async function copyHome() {
-  try {
-    await navigator.clipboard.writeText('https://zhouwu.ccwu.cc')
-    showToast('主页地址已复制')
-  } catch {
-    showToast('https://zhouwu.ccwu.cc')
-  }
 }
 
 function openMusicSettings() { dialog1.value = true; tab.value = 'tab-3' }
@@ -303,9 +269,5 @@ onMounted(async () => {
   } catch (e) {
     console.log('音乐加载失败', e)
   }
-})
-
-onBeforeUnmount(() => {
-  clearTimeout(toastTimer)
 })
 </script>

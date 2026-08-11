@@ -22,8 +22,9 @@ const config = {
 
 	// Hero 区域文案（桌面端工作台）
 	hero: {
-		intro: '欢迎来到我的小世界。',
-		description: '写代码、刷题、做项目，也会追番、听歌和收集一些奇奇怪怪的网站。这里不需要把所有东西都做成卡片——只留下真正想让你看到的部分。',
+		intro: '写点代码，也做些真正想用的东西。',
+		description: '最近主要折腾沈理校园、算法，还有一些乱七八糟的小项目。',
+		tagline: '沈阳理工大学 · 计算机 / 开发 / 二次元',
 		status: '大概率还没睡',
 		quote: '生活不止眼前的代码，还有远方的番剧和奶茶。',
 		location: 'Shenyang',
@@ -154,27 +155,28 @@ const config = {
 	],
 
 	// 新项目结构：featured / tags / status
+	// 第一个 featured 且非 treasure 的项目 = 页面主作品
 	projects: [
 		{
+			id: 'sylulive',
+			title: '沈理校园 · SYLUlive',
+			subtitle: 'Flutter / Go / PostgreSQL',
+			description: '校园课表、成绩、二课、社区、二手市场……',
+			img: "/img/illust_132964987_20260420_102513.jpg",
+			url: "https://github.com/zhouwu97/SYLUlive",
+			featured: true,
+			tags: ['Flutter', 'Go', 'PostgreSQL'],
+			status: 'Building',
+		},
+		{
 			id: 'luogu',
-			title: '洛谷 · 刷题记录',
-			subtitle: 'Algorithm practice / Luogu',
+			title: '洛谷',
+			subtitle: '算法练习',
 			description: '算法竞赛题目练习与题解。',
 			img: "/img/illust_132964987_20260420_102507.jpg",
 			url: "https://www.luogu.com.cn/user/1993718",
-			featured: true,
-			tags: ['算法', '题解'],
-			status: 'Pinned',
-		},
-		{
-			id: 'treasure',
-			title: '宝藏网站',
-			subtitle: '实用工具 & 资源导航',
-			description: '发现互联网上的宝藏资源。',
-			img: "/img/illust_132964987_20260420_102509.jpg",
-			url: "treasure",
 			featured: false,
-			tags: ['工具', '资源'],
+			tags: ['算法'],
 			status: '',
 		},
 		{
@@ -189,15 +191,15 @@ const config = {
 			status: '',
 		},
 		{
-			id: 'sylulive',
-			title: '沈理校园 · SYLUlive',
-			subtitle: 'Flutter / Go / PostgreSQL',
-			description: '校园课表、成绩、二课、社区、二手市场……',
-			img: "/img/illust_132964987_20260420_102513.jpg",
-			url: "https://github.com/zhouwu97/SYLUlive",
-			featured: true,
-			tags: ['Flutter', 'Go', 'PostgreSQL'],
-			status: 'Building',
+			id: 'treasure',
+			title: '宝藏网站',
+			subtitle: '实用工具 & 资源导航',
+			description: '发现互联网上的宝藏资源。',
+			img: "/img/illust_132964987_20260420_102509.jpg",
+			url: "treasure",
+			featured: false,
+			tags: ['工具', '资源'],
+			status: '',
 		},
 	],
 

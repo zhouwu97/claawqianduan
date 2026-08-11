@@ -1,6 +1,6 @@
 <template>
   <!-- 主作品 -->
-  <a v-if="variant === 'showcase'" class="showcase" :href="item.url" target="_blank" rel="noreferrer" @click.prevent="handleClick">
+  <a v-if="variant === 'showcase'" class="showcase" :class="{ 'is-revealed': revealed }" :href="item.url" target="_blank" rel="noreferrer" @click.prevent="handleClick">
     <div class="showcase-body">
       <div class="showcase-kicker">正在做</div>
       <h4>{{ item.title }}</h4>
@@ -30,7 +30,7 @@
 import { computed } from 'vue'
 
 export default {
-  props: ['item', 'variant'],
+  props: ['item', 'variant', 'revealed'],
   emits: ['open-treasure'],
   setup(props, { emit }) {
     const stack = computed(() => {

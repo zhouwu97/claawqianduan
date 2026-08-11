@@ -9,10 +9,11 @@
     <video v-if="videosrc" autoplay loop muted class="video-bg" id="bg-video" ref="videoEl">
       <source :src="videosrc" type="video/mp4">
     </video>
-    <div class="page-bg"></div>
+    <div class="page-bg" :class="{ intro: !visited && !isClearScreen, 'clear-mode': isClearScreen }"></div>
     <div class="noise"></div>
 
-    <div class="layout" :class="{ 'no-hero-anim': visited }" v-show="!isloading && !isClearScreen">
+    <Transition name="clear">
+      <div v-if="!isloading && !isClearScreen" class="layout" :class="{ intro: !visited && !isClearScreen }">
       <aside class="rail">
         <ProfileSidebar
           :configdata="configdata"
@@ -60,7 +61,8 @@
           </footer>
         </div>
       </main>
-    </div>
+      </div>
+    </Transition>
 
     <TreasureDrawer v-model="treasureOpen" :sites="treasureSites" />
 

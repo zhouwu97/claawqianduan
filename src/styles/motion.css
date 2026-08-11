@@ -6,6 +6,7 @@
    - card hover 只 translateY(-2px)，img scale(1.014)
    - 只动 transform / opacity / color / border-color / background-color
    - 禁止 transition: all；禁止 width/height/left/top 动画
+   - Signature Motion：首次进入 / showcase reveal / 清屏切换（见 layout.css）
    ============================================ */
 
 /* 抽屉 / bottom sheet：240-320ms */
@@ -15,12 +16,62 @@
 }
 
 /* prefers-reduced-motion：更温和，不是零反馈。
-   移除位移类动画，保留 opacity/color 状态反馈（120-180ms）。 */
+   位移/mask/scale 移除，保留 opacity/color 状态反馈（120-180ms）。 */
 @media (prefers-reduced-motion: reduce) {
-  /* 位移类动画移除 */
-  .hero {
+  /* A. 电影式入场 → 只保留 180ms 透明度淡入，无位移/mask/背景缩放 */
+  .page-bg.intro {
     animation: none;
   }
+  .intro .rail,
+  .intro .hero-title-inner,
+  .intro .hero-copy,
+  .intro .hero-meta,
+  .intro .hero-status,
+  .intro .search-wrap {
+    animation: fadeOpacity 180ms ease both;
+  }
+  @keyframes fadeOpacity {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .intro .hero-title-inner {
+    transform: translateY(0);
+  }
+
+  /* B. showcase reveal → 只保留 180ms 透明度，无位移/scale/clip */
+  .showcase {
+    opacity: 0;
+    transform: none;
+    transition: opacity 180ms ease;
+  }
+  .showcase.is-revealed {
+    opacity: 1;
+  }
+  .showcase-visual,
+  .showcase-body,
+  .showcase-cta {
+    clip-path: none;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  /* C. 清屏切换 → crossfade 180ms，无 scale/translate */
+  .clear-enter-active,
+  .clear-leave-active {
+    transition: opacity 180ms ease;
+  }
+  .clear-enter-from,
+  .clear-leave-to,
+  .clear-leave-to .rail {
+    opacity: 0;
+    transform: none;
+  }
+  .clear-leave-active .rail {
+    transition: opacity 180ms ease;
+  }
+
+  /* 微交互：无位移，保留颜色反馈 */
   .nav-indicator {
     transition: none;
   }
@@ -38,9 +89,7 @@
   .showcase:hover,
   .showcase:active,
   .showcase:hover .showcase-visual img,
-  .showcase:hover .showcase-cta svg {
-    transform: none;
-  }
+  .showcase:hover .showcase-cta svg,
   .entry:hover .arr {
     transform: none;
   }

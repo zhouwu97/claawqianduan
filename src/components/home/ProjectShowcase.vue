@@ -1,8 +1,9 @@
 <template>
-  <div class="projects-v3">
+  <div class="projects-v3" ref="projEl" :class="{ 'is-revealed': revealed }">
     <ProjectCard
       v-if="mainProject"
       :item="mainProject"
+      :revealed="revealed"
       variant="showcase"
       @open-treasure="emit('open-treasure')"
     />
@@ -20,7 +21,7 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import ProjectCard from './ProjectCard.vue'
 
 export default {
@@ -44,7 +45,32 @@ export default {
       return list.filter(p => p !== mainProject.value).slice(0, 3)
     })
 
-    return { emit, mainProject, entryProjects }
+    /* 主作品首次进入 viewport 的 reveal：只播放一次，永久 settle */
+    const projEl = ref(null)
+    const revealed = ref(false)
+    let io = null
+
+    onMounted(() => {
+      if (!('IntersectionObserver' in window)) {
+        revealed.value = true
+        return
+      }
+      io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            revealed.value = true
+            io && io.disconnect()
+          }
+        })
+      }, { threshold: 0.25 })
+      if (projEl.value) io.observe(projEl.value)
+    })
+
+    onBeforeUnmount(() => {
+      if (io) io.disconnect()
+    })
+
+    return { emit, mainProject, entryProjects, projEl, revealed }
   }
 }
 </script>

@@ -10,12 +10,14 @@
   background: var(--color-bg);
 }
 
-/* 背景层：壁纸本身即页面，单层明暗保护（左侧重右侧轻，人物露出来） */
+/* 背景层：壁纸本身即页面，单层明暗保护（左侧重右侧轻，人物露出来）
+   transform/filter 用于清屏场景切换（scale 1.02 → 1，亮度 → 100%） */
 .page-bg {
   position: fixed;
   inset: 0;
   z-index: -4;
   transform: scale(1.02);
+  transition: transform 700ms var(--ease-in-out), filter 700ms ease;
 }
 .page-bg::before {
   content: "";
@@ -25,6 +27,21 @@
   background-size: cover;
   background-position: center;
   filter: brightness(var(--leleo-brightness, 90%));
+  transition: filter 700ms ease;
+}
+.page-bg.clear-mode {
+  transform: scale(1);
+}
+.page-bg.clear-mode::before {
+  filter: brightness(1);
+}
+/* 首次进入：电影式落位（会话内只播一次） */
+.page-bg.intro {
+  animation: bgSettle 900ms var(--ease-out) both;
+}
+@keyframes bgSettle {
+  from { transform: scale(1.045); }
+  to { transform: scale(1.02); }
 }
 .page-bg::after {
   content: "";
@@ -345,22 +362,8 @@
 .hero {
   padding: 6px 0 42px;
   border-bottom: 1px solid var(--border-line);
-  animation: heroIn 0.5s var(--ease-out) both;
 }
-@keyframes heroIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-/* 会话内已访问过则不再重放入场（HomeShell 控制） */
-.no-hero-anim .hero {
-  animation: none;
-}
+/* 标题：mask reveal（overflow 遮罩下揭开），非 fade-up */
 .hero-title {
   margin: 0;
   font-size: clamp(40px, 3.6vw, 54px);
@@ -368,6 +371,11 @@
   letter-spacing: -0.03em;
   font-weight: 700;
   color: #fff;
+  overflow: hidden;
+}
+.hero-title-inner {
+  display: block;
+  transform: translateY(0);
 }
 .hero-title .accent {
   color: var(--color-accent);
@@ -858,4 +866,142 @@
   transition:
     opacity 160ms var(--ease-out),
     transform 160ms var(--ease-out);
+}
+
+
+/* ============================================
+   V3.3 Signature Motion
+   A. 电影式入场（.intro 由 HomeShell 控制，会话内一次）
+   ============================================ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes railIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes titleReveal {
+  from { transform: translateY(105%); }
+  to { transform: translateY(0); }
+}
+.intro .rail {
+  animation: railIn 420ms var(--ease-out) 80ms both;
+}
+.intro .hero-title-inner {
+  transform: translateY(105%);
+  animation: titleReveal 560ms var(--ease-out) 120ms both;
+}
+.intro .hero-copy {
+  animation: fadeUp 460ms var(--ease-out) 190ms both;
+}
+.intro .hero-meta {
+  animation: fadeUp 430ms var(--ease-out) 250ms both;
+}
+.intro .hero-status {
+  animation: fadeUp 430ms var(--ease-out) 250ms both;
+}
+.intro .search-wrap {
+  animation: fadeUp 420ms var(--ease-out) 340ms both;
+}
+
+/* ============================================
+   B. SYLUlive showcase reveal（IntersectionObserver 触发 .is-revealed）
+   播一次永久 settle，滚出滚入不重播
+   ============================================ */
+.showcase {
+  opacity: 0.35;
+  transform: translateY(18px) scale(0.985);
+  transition:
+    opacity 520ms var(--ease-out),
+    transform 520ms var(--ease-out),
+    border-color 180ms ease,
+    box-shadow 220ms var(--ease-out);
+}
+.showcase.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+.showcase-visual {
+  position: relative;
+  min-height: 230px;
+  overflow: hidden;
+  clip-path: inset(0 24% 0 0);
+  transition: clip-path 650ms var(--ease-out);
+}
+.is-revealed .showcase-visual {
+  clip-path: inset(0);
+}
+.showcase-body {
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 460ms var(--ease-out) 60ms,
+    transform 460ms var(--ease-out) 60ms;
+}
+.is-revealed .showcase-body {
+  opacity: 1;
+  transform: none;
+}
+.showcase-cta {
+  opacity: 0;
+  transition: opacity 460ms var(--ease-out) 110ms;
+}
+.is-revealed .showcase-cta {
+  opacity: 1;
+}
+/* hover 仍在 media 内覆盖 transform（见上文），此处仅还原 reveal 态
+   并保证 hover 位移用 180ms，而非 reveal 的 520ms */
+@media (hover: hover) and (pointer: fine) {
+  .showcase {
+    transition:
+      opacity 520ms var(--ease-out),
+      transform 180ms var(--ease-out),
+      border-color 180ms ease,
+      box-shadow 220ms var(--ease-out);
+  }
+  .showcase.is-revealed:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* ============================================
+   C. 清屏场景切换：UI 退场 → 壁纸成主体
+   ============================================ */
+.clear-enter-active {
+  transition:
+    opacity 320ms ease,
+    transform 320ms ease;
+}
+.clear-enter-from {
+  opacity: 0;
+  transform: scale(0.992);
+}
+.clear-leave-active {
+  transition:
+    opacity 240ms ease,
+    transform 240ms ease;
+}
+.clear-leave-to {
+  opacity: 0;
+  transform: scale(0.992);
+}
+.clear-leave-active .rail {
+  transition:
+    opacity 220ms ease,
+    transform 220ms ease;
+}
+.clear-leave-to .rail {
+  opacity: 0;
+  transform: translateX(-8px);
+}
+.clear-restore-enter-active {
+  transition:
+    opacity 180ms var(--ease-out) 340ms,
+    transform 180ms var(--ease-out) 340ms;
+}
+.clear-restore-leave-active {
+  transition:
+    opacity 120ms ease,
+    transform 120ms ease;
 }

@@ -1,6 +1,6 @@
 <template>
   <section class="hero">
-    <h1 class="hero-title"><span class="accent">{{ heroData.name }}</span>。</h1>
+    <h1 class="hero-title"><span class="hero-title-inner"><span class="accent">{{ heroData.name }}</span>。</span></h1>
     <p class="hero-copy">{{ heroData.intro }}<br>{{ heroData.description }}</p>
     <div class="hero-meta">{{ heroData.tagline }}</div>
     <div class="hero-status">

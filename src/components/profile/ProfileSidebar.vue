@@ -3,6 +3,7 @@
     <ProfileIdentity :configdata="configdata" />
 
     <nav class="nav">
+      <div class="nav-indicator" :style="{ '--active-index': navIndex }"></div>
       <button class="nav-btn" :class="{ active: activeNav === 'top' }" @click="go('top')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 10.5 12 4l8 6.5V20H8v-6h8v6"/><path d="M4 10.5V20h4"/></svg>
         <span>首页</span>
@@ -52,6 +53,10 @@ export default {
   emits: ['open-settings', 'open-about', 'toggle-play', 'prev', 'next', 'open-music', 'scroll-to', 'clear-screen'],
   setup(props, { emit }) {
     const activeNav = ref('top')
+    const navIndex = computed(() => {
+      const idx = ['top', 'projects', 'skills'].indexOf(activeNav.value)
+      return idx >= 0 ? idx : 0
+    })
 
     const name = computed(() => props.configdata.name || '周周')
     const location = computed(() => props.configdata.hero?.location || 'Shenyang')
@@ -67,7 +72,7 @@ export default {
       emit('scroll-to', id)
     }
 
-    return { emit, activeNav, name, location, tags, socials, githubUrl, go }
+    return { emit, activeNav, navIndex, name, location, tags, socials, githubUrl, go }
   }
 }
 </script>

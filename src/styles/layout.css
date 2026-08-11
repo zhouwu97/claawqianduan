@@ -24,25 +24,25 @@
   background-image: var(--leleo-background-image-url);
   background-size: cover;
   background-position: center;
-  filter: brightness(var(--leleo-brightness, 85%));
+  filter: brightness(var(--leleo-brightness, 90%));
 }
 .page-bg::after {
   content: "";
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(10, 10, 13, 0.72), rgba(10, 10, 13, 0.34) 42%, rgba(10, 10, 13, 0.2) 68%, rgba(10, 10, 13, 0.06)),
+    linear-gradient(90deg, rgba(10, 10, 13, 0.66), rgba(10, 10, 13, 0.32) 42%, rgba(10, 10, 13, 0.18) 68%, rgba(10, 10, 13, 0.06)),
     radial-gradient(circle at 80% 20%, rgba(255, 137, 181, 0.12), transparent 30%),
     linear-gradient(180deg, transparent, rgba(9, 9, 11, 0.34) 92%);
 }
 
-/* 颗粒噪点 */
+/* 颗粒噪点：极轻，避免给柔和插画蒙灰 */
 .noise {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 20;
-  opacity: 0.028;
+  opacity: 0.014;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
 }
 
@@ -117,11 +117,25 @@
   box-shadow: 0 0 0 4px rgba(143, 212, 168, 0.09);
 }
 
-/* 导航：active 只留 2px 粉线 + 字重，无 pill */
+/* 导航：共享 indicator 平滑移动，无 pill */
 .nav {
+  position: relative;
   display: grid;
   gap: 2px;
   margin-top: 6px;
+}
+.nav-indicator {
+  position: absolute;
+  left: -20px;
+  top: 0;
+  width: 2px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  transform: translate3d(0, calc(var(--active-index, 0) * 40px + 11px), 0);
+  transition:
+    transform 180ms var(--ease-in-out),
+    opacity 120ms ease;
 }
 .nav-btn {
   width: 100%;
@@ -159,15 +173,6 @@
 .nav-btn.active {
   color: #fff;
   font-weight: 600;
-}
-.nav-btn.active::before {
-  content: "";
-  position: absolute;
-  left: -20px;
-  width: 2px;
-  height: 16px;
-  border-radius: 2px;
-  background: var(--color-accent);
 }
 .nav-btn:active {
   transform: scale(0.98);
@@ -340,17 +345,21 @@
 .hero {
   padding: 6px 0 42px;
   border-bottom: 1px solid var(--border-line);
-  animation: heroIn 0.6s var(--ease-out) both;
+  animation: heroIn 0.5s var(--ease-out) both;
 }
 @keyframes heroIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
     transform: none;
   }
+}
+/* 会话内已访问过则不再重放入场（HomeShell 控制） */
+.no-hero-anim .hero {
+  animation: none;
 }
 .hero-title {
   margin: 0;
@@ -403,7 +412,7 @@
   line-height: 1.7;
 }
 
-/* ============ Search：轻量工具，不横跨全宽 ============ */
+/* ============ Search：全页唯一 glass 表面 ============ */
 .search-wrap {
   padding: 30px 0 8px;
   max-width: 560px;
@@ -412,7 +421,9 @@
   height: 54px;
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.09);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(20, 20, 24, 0.2);
+  backdrop-filter: blur(10px) saturate(115%);
+  -webkit-backdrop-filter: blur(10px) saturate(115%);
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
@@ -477,7 +488,7 @@
   color: #ffd8e7;
 }
 .search-submit:active {
-  transform: scale(0.95);
+  transform: scale(0.96);
 }
 .search-submit svg {
   width: 16px;
@@ -525,34 +536,50 @@
   gap: 26px;
 }
 
-/* 主作品：唯一明显容器，图从右自然渗入（作品封面感） */
+/* 主作品：唯一明显容器，左暗右图融合 + 极弱粉色环境光 */
 .showcase {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
   border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid var(--border-soft);
-  background: linear-gradient(
-    90deg,
-    rgba(15, 15, 18, 0.88) 0%,
-    rgba(15, 15, 18, 0.78) 58%,
-    rgba(15, 15, 18, 0.2) 100%
-  );
+  background:
+    radial-gradient(circle at 68% 48%, rgba(255, 137, 181, 0.1), transparent 34%),
+    linear-gradient(
+      90deg,
+      rgba(15, 15, 18, 0.9) 0%,
+      rgba(15, 15, 18, 0.76) 56%,
+      rgba(15, 15, 18, 0.16) 100%
+    );
   text-align: left;
   color: inherit;
   cursor: pointer;
   transition:
-    transform 220ms var(--ease-out),
-    border-color var(--duration-ui) ease,
+    transform 180ms var(--ease-out),
+    border-color 180ms ease,
     box-shadow 220ms var(--ease-out);
-}
-.showcase:hover {
-  transform: translateY(-3px);
-  border-color: rgba(255, 255, 255, 0.16);
-  box-shadow: var(--shadow-card);
 }
 .showcase:active {
   transform: translateY(-1px) scale(0.995);
+}
+@media (hover: hover) and (pointer: fine) {
+  .showcase:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.16);
+    box-shadow: var(--shadow-card);
+  }
+  .showcase-cta svg {
+    transition: transform 180ms var(--ease-out);
+  }
+  .showcase:hover .showcase-cta svg {
+    transform: translateX(3px);
+  }
+  .showcase-visual img {
+    transition: transform 240ms var(--ease-out);
+  }
+  .showcase:hover .showcase-visual img {
+    transform: scale(1.014);
+  }
 }
 .showcase-body {
   padding: 32px 30px;
@@ -601,10 +628,6 @@
 .showcase-cta svg {
   width: 14px;
   height: 14px;
-  transition: transform var(--duration-ui) var(--ease-out);
-}
-.showcase:hover .showcase-cta svg {
-  transform: translateX(3px);
 }
 .showcase-visual {
   position: relative;
@@ -618,10 +641,6 @@
   height: 100%;
   object-fit: cover;
   filter: saturate(0.95) brightness(0.92);
-  transition: transform 480ms var(--ease-out);
-}
-.showcase:hover .showcase-visual img {
-  transform: scale(1.02);
 }
 .showcase-visual::after {
   content: "";
@@ -667,7 +686,7 @@
 }
 .entry-body span {
   display: block;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.5);
   font-size: 11px;
   white-space: nowrap;
   overflow: hidden;
@@ -683,9 +702,11 @@
     opacity var(--duration-ui) ease,
     transform var(--duration-ui) var(--ease-out);
 }
-.entry:hover .arr {
-  opacity: 1;
-  transform: none;
+@media (hover: hover) and (pointer: fine) {
+  .entry:hover .arr {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* ============ 技能 / 近况：无卡，纯排版 ============ */
@@ -803,4 +824,38 @@
 .footer b {
   color: rgba(255, 255, 255, 0.5);
   font-weight: 550;
+}
+
+/* ============ 清屏恢复按钮：独立于 layout，右下角极淡 ============ */
+.clear-restore {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 30;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  background: rgba(12, 12, 15, 0.26);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 11px;
+  cursor: pointer;
+  transition:
+    opacity 160ms var(--ease-out),
+    transform 160ms var(--ease-out);
+}
+.clear-restore:active {
+  transform: scale(0.97);
+}
+.clear-restore-enter-from,
+.clear-restore-leave-to {
+  opacity: 0;
+  transform: translateY(6px) scale(0.97);
+}
+.clear-restore-enter-active,
+.clear-restore-leave-active {
+  transition:
+    opacity 160ms var(--ease-out),
+    transform 160ms var(--ease-out);
 }

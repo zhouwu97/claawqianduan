@@ -12,7 +12,7 @@
     <div class="page-bg"></div>
     <div class="noise"></div>
 
-    <div class="layout" v-show="!isloading && !isClearScreen">
+    <div class="layout" :class="{ 'no-hero-anim': visited }" v-show="!isloading && !isClearScreen">
       <aside class="rail">
         <ProfileSidebar
           :configdata="configdata"
@@ -64,6 +64,12 @@
 
     <TreasureDrawer v-model="treasureOpen" :sites="treasureSites" />
 
+    <Transition name="clear-restore">
+      <button v-if="isClearScreen" class="clear-restore" @click="isClearScreen = false">
+        返回主页
+      </button>
+    </Transition>
+
     <audio ref="audioEl" @waiting="onWaiting" @canplay="onCanPlay" @ended="nextTrack"></audio>
 
     <SettingsDialog v-model="dialog1" v-model:tab="tab"
@@ -112,6 +118,8 @@ const tab = ref(null)
 const treasureOpen = ref(false)
 const audioEl = ref(null)
 const videoEl = ref(null)
+// Hero 入场只播放一次（会话内）
+const visited = ref(sessionStorage.getItem('zhouzhou-visited') === '1')
 
 const {
   musicinfo, musicinfoLoading, playlistIndex, isPlaying, audioLoading, lyrics, currentSong,
@@ -200,6 +208,7 @@ watch(isClearScreen, (val) => {
 })
 
 onMounted(async () => {
+  sessionStorage.setItem('zhouzhou-visited', '1')
   isloading.value = true
   applyMeta(configdata.value)
   applyThemeVars(configdata.value)

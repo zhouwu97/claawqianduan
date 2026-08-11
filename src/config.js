@@ -17,7 +17,7 @@ const config = {
 		turntablecolor2: "#DDA0DD"
 	},
 
-	brightness: 85,
+	brightness: 90,
 	blur: 5,
 
 	// Hero 区域文案（桌面端工作台）

@@ -1,0 +1,52 @@
+/* ============================================
+   Design Tokens — 全站唯一取值来源
+   禁止在组件里手填色值/圆角/时长
+   ============================================ */
+:root {
+  /* 背景与表面 */
+  --color-bg: #101013;
+  --color-surface: rgba(20, 20, 24, 0.82);
+  --color-surface-strong: rgba(17, 17, 20, 0.94);
+  --color-surface-hover: rgba(255, 255, 255, 0.08);
+  --color-soft: rgba(255, 255, 255, 0.065);
+  --color-soft-hover: rgba(255, 255, 255, 0.1);
+
+  /* 文字 */
+  --color-text: #f7f7f8;
+  --color-text-secondary: #a9a9b1;
+  --color-text-tertiary: #777781;
+  --color-text-faint: #64646d;
+
+  /* 品牌色：粉色仅作 accent */
+  --color-accent: #ff89b5;
+  --color-accent-strong: #ff6fa9;
+  --color-accent-soft: rgba(255, 137, 181, 0.15);
+  --color-purple: #dda0dd;
+  --color-green: #8fd4a8;
+
+  /* 边框 */
+  --border-soft: rgba(255, 255, 255, 0.09);
+  --border-line: rgba(255, 255, 255, 0.1);
+
+  /* 圆角 */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+
+  /* 动效 */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --duration-fast: 120ms;
+  --duration-ui: 180ms;
+  --duration-panel: 240ms;
+  --duration-slow: 480ms;
+
+  /* 阴影 */
+  --shadow-panel: 0 24px 80px rgba(0, 0, 0, 0.34);
+  --shadow-card: 0 14px 36px rgba(0, 0, 0, 0.22);
+
+  /* 字体 */
+  --font-sans: Inter, "SF Pro Display", "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+}

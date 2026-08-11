@@ -1,8 +1,11 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 
-import './style/app.less'
-import './style/mobile.less'
+import './styles/tokens.css'
+import './styles/base.css'
+import './styles/layout.css'
+import './styles/motion.css'
+import './styles/responsive.css'
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
@@ -12,6 +15,9 @@ import '@mdi/font/css/materialdesignicons.css'
 const vuetify = createVuetify({
     components,
     directives,
+    theme: {
+        defaultTheme: 'dark',
+    },
     icons: {
         defaultSet: 'mdi',
     },

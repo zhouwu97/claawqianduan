@@ -1,0 +1,41 @@
+/* ============================================
+   Motion — 轻量高质量动效
+   规则：
+   - 高频 UI 动画 <= 200ms
+   - 普通 UI 动画 <= 300ms
+   - button :active scale(.97)
+   - card hover 只允许 translateY(-2~-3px)
+   - 图片 hover scale 不超过 1.025
+   ============================================ */
+
+/* 页面首次进入：只做一次，可稍微漂亮 */
+.shell {
+  animation: shellIn 0.65s var(--ease-out) both;
+}
+@keyframes shellIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.992);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Drawer：240ms cubic-bezier(.32,.72,0,1)（Vuetify drawer 过渡自定义） */
+.v-navigation-drawer {
+  transition-duration: var(--duration-panel);
+}
+
+/* prefers-reduced-motion：一键关闭 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

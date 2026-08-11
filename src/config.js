@@ -6,6 +6,7 @@ const config = {
 		icon: '/favicon.ico'
 	},
 
+	name: '周周',
 	avatar: "/img/touxiang.jpg",
 	welcometitle: "Hi, I'm 周周",
 
@@ -18,6 +19,15 @@ const config = {
 
 	brightness: 85,
 	blur: 5,
+
+	// Hero 区域文案（桌面端工作台）
+	hero: {
+		intro: '欢迎来到我的小世界。',
+		description: '写代码、刷题、做项目，也会追番、听歌和收集一些奇奇怪怪的网站。这里不需要把所有东西都做成卡片——只留下真正想让你看到的部分。',
+		status: '大概率还没睡',
+		quote: '生活不止眼前的代码，还有远方的番剧和奶茶。',
+		location: 'Shenyang',
+	},
 
 	tags: ['二次元', '猫奴', '夜猫子', '甜食控', '社恐', '追番达人', '游戏宅', '治愈系'],
 
@@ -44,6 +54,33 @@ const config = {
 		skills: ['Vue.js', 'React', 'JavaScript', 'TypeScript', 'Node', 'Python', 'CSS', 'Figma', 'Git', 'Docker', 'Linux'],
 		skillPoints: [80, 72, 85, 75, 78, 68, 88, 65, 82, 60, 70],
 	},
+
+	// 技术栈（新，取代雷达图首页展示；未配置时回退到 polarChart 前 6 项）
+	skills: {
+		list: [
+			{ name: 'JavaScript', value: 85 },
+			{ name: 'CSS / UI', value: 88 },
+			{ name: 'Vue.js', value: 80 },
+			{ name: 'TypeScript', value: 75 },
+			{ name: 'Node', value: 78 },
+		],
+	},
+
+	// 最近在做（新）
+	now: [
+		{
+			icon: 'M8 6h8M6 10h12M6 14h8M6 18h5',
+			title: '沈理校园 SYLUlive',
+			subtitle: '校园应用 · Flutter + Go',
+			status: 'Active',
+		},
+		{
+			icon: 'm6 16 4-8 4 8 4-8',
+			title: '算法练习',
+			subtitle: 'NowCoder · AtCoder · Luogu',
+			status: 'Daily',
+		},
+	],
 
 	socialPlatformIcons: [
 		{ icon: "mdi-home", link: "https://zhouwu.ccwu.cc" },
@@ -116,6 +153,55 @@ const config = {
 		},
 	],
 
+	// 新项目结构：featured / tags / status
+	projects: [
+		{
+			id: 'luogu',
+			title: '洛谷 · 刷题记录',
+			subtitle: 'Algorithm practice / Luogu',
+			description: '算法竞赛题目练习与题解。',
+			img: "/img/illust_132964987_20260420_102507.jpg",
+			url: "https://www.luogu.com.cn/user/1993718",
+			featured: true,
+			tags: ['算法', '题解'],
+			status: 'Pinned',
+		},
+		{
+			id: 'treasure',
+			title: '宝藏网站',
+			subtitle: '实用工具 & 资源导航',
+			description: '发现互联网上的宝藏资源。',
+			img: "/img/illust_132964987_20260420_102509.jpg",
+			url: "treasure",
+			featured: false,
+			tags: ['工具', '资源'],
+			status: '',
+		},
+		{
+			id: 'playlist',
+			title: '歌单分享',
+			subtitle: 'NetEase Music',
+			description: '网易云音乐歌单分享',
+			img: "/img/illust_132964987_20260420_102511(1).jpg",
+			url: "https://music.163.com/m/playlist?id=12440761642&creatorId=4940956665",
+			featured: false,
+			tags: ['音乐'],
+			status: '',
+		},
+		{
+			id: 'sylulive',
+			title: '沈理校园 · SYLUlive',
+			subtitle: 'Flutter / Go / PostgreSQL',
+			description: '校园课表、成绩、二课、社区、二手市场……',
+			img: "/img/illust_132964987_20260420_102513.jpg",
+			url: "https://github.com/zhouwu97/SYLUlive",
+			featured: true,
+			tags: ['Flutter', 'Go', 'PostgreSQL'],
+			status: 'Building',
+		},
+	],
+
+	// 旧字段保留兼容
 	projectcards: [
 		{ go: "🏠 前往", img: "/img/illust_132964987_20260420_102507.jpg", title: "洛谷", subtitle: "刷题记录", text: "算法竞赛题目练习与题解。", url: "https://www.luogu.com.cn/user/1993718", show: false },
 		{ go: "💎 前往", img: "/img/illust_132964987_20260420_102509.jpg", title: "宝藏网站", subtitle: "实用工具 & 资源导航", text: "发现互联网上的宝藏资源。", url: "treasure", show: false },

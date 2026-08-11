@@ -31,6 +31,10 @@
         @toggle-play="emit('toggle-play')" @prev="emit('prev')" @next="emit('next')"
         @open-music="emit('open-music')" />
       <SocialLinks :items="socials" @open-settings="emit('open-settings')" @open-about="emit('open-about')" />
+      <button class="clear-screen" @click="emit('clear-screen')">
+        <v-icon>mdi-eye-off-outline</v-icon>
+        清屏 · 只看壁纸
+      </button>
     </div>
   </div>
 </template>
@@ -45,7 +49,7 @@ import MusicDock from './MusicDock.vue'
 export default {
   components: { ProfileIdentity, ProfileTags, SocialLinks, MusicDock },
   props: ['configdata', 'currentSong', 'isPlaying'],
-  emits: ['open-settings', 'open-about', 'toggle-play', 'prev', 'next', 'open-music', 'scroll-to'],
+  emits: ['open-settings', 'open-about', 'toggle-play', 'prev', 'next', 'open-music', 'scroll-to', 'clear-screen'],
   setup(props, { emit }) {
     const activeNav = ref('top')
 

@@ -12,17 +12,6 @@
     <div class="page-bg"></div>
     <div class="noise"></div>
 
-    <div class="floating-switch-container">
-      <v-switch
-        v-model="isClearScreen"
-        inset
-        color="var(--color-accent)"
-        class="floating-switch"
-        @mouseover="expandSwitch"
-        @mouseleave="collapseSwitch"
-      ></v-switch>
-    </div>
-
     <div class="layout" v-show="!isloading && !isClearScreen">
       <aside class="rail">
         <ProfileSidebar
@@ -36,6 +25,7 @@
           @next="nextTrack"
           @open-music="openMusicSettings"
           @scroll-to="scrollToSection"
+          @clear-screen="isClearScreen = !isClearScreen"
         />
       </aside>
 
@@ -119,7 +109,6 @@ const isClearScreen = ref(false)
 const dialog1 = ref(false)
 const dialog2 = ref(false)
 const tab = ref(null)
-const isExpanded = ref(false)
 const treasureOpen = ref(false)
 const audioEl = ref(null)
 const videoEl = ref(null)
@@ -196,8 +185,6 @@ function scrollToSection(id) {
 }
 
 function openMusicSettings() { dialog1.value = true; tab.value = 'tab-3' }
-function expandSwitch() { isExpanded.value = true }
-function collapseSwitch() { isExpanded.value = false }
 
 const year = new Date().getFullYear()
 

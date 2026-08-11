@@ -1,5 +1,7 @@
 ﻿/* ============================================
-   Layout 鈥?V3锛氬绾稿嵆鐢诲竷锛屽厠鍒?rail + 寮€鏀炬帓鐗?   鍘熷垯锛氳兘鐢ㄦ帓鐗?鐣欑櫧/缁嗙嚎琛ㄨ揪鐨勶紝涓嶇敤鍗＄墖
+   Layout — V3.1：壁纸即画布，克制 rail + 开放排版
+   原则：能用排版/留白/细线表达的，不用卡片
+   对比度分层：主文字 0.94 / 次文字 0.62 / 辅助 0.40
    ============================================ */
 .app-root {
   position: fixed;
@@ -8,7 +10,7 @@
   background: var(--color-bg);
 }
 
-/* 鑳屾櫙灞傦細澹佺焊鏈韩鍗抽〉闈紝鍗曞眰鏄庢殫淇濇姢锛堝乏渚ч噸鍙充晶杞伙紝浜虹墿闇插嚭鏉ワ級 */
+/* 背景层：壁纸本身即页面，单层明暗保护（左侧重右侧轻，人物露出来） */
 .page-bg {
   position: fixed;
   inset: 0;
@@ -34,7 +36,7 @@
     linear-gradient(180deg, transparent, rgba(9, 9, 11, 0.34) 92%);
 }
 
-/* 棰楃矑鍣偣 */
+/* 颗粒噪点 */
 .noise {
   position: fixed;
   inset: 0;
@@ -44,7 +46,7 @@
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
 }
 
-/* ============ 甯冨眬锛歳ail + main锛屾棤澶у澹?============ */
+/* ============ 布局：rail + main，无大外壳 ============ */
 .layout {
   position: relative;
   z-index: 1;
@@ -52,7 +54,7 @@
   min-height: 100vh;
 }
 
-/* 宸︿晶韬唤 rail锛氶€忔槑锛屽彧鐣欑粏绾?*/
+/* 左侧身份 rail：透明，只留细线 */
 .rail {
   width: 224px;
   flex: 0 0 224px;
@@ -69,7 +71,7 @@
   min-height: 0;
 }
 
-/* 韬唤鍖?*/
+/* 身份区 */
 .identity {
   display: flex;
   align-items: center;
@@ -98,10 +100,11 @@
   margin: 0 0 5px;
   font-weight: 680;
   letter-spacing: 0.01em;
+  color: #fff;
 }
 .identity p {
   font-size: 11px;
-  color: var(--color-text-secondary);
+  color: rgba(255, 255, 255, 0.52);
   margin: 0;
 }
 .live-dot {
@@ -114,7 +117,7 @@
   box-shadow: 0 0 0 4px rgba(143, 212, 168, 0.09);
 }
 
-/* 瀵艰埅锛歛ctive 鍙暀 2px 绮夌嚎 + 瀛楅噸锛屾棤 pill */
+/* 导航：active 只留 2px 粉线 + 字重，无 pill */
 .nav {
   display: grid;
   gap: 2px;
@@ -130,7 +133,7 @@
   align-items: center;
   gap: 11px;
   padding: 0 10px;
-  color: #9a9aa3;
+  color: rgba(255, 255, 255, 0.56);
   cursor: pointer;
   text-align: left;
   position: relative;
@@ -151,7 +154,7 @@
   white-space: nowrap;
 }
 .nav-btn:hover {
-  color: #e6e6ea;
+  color: rgba(255, 255, 255, 0.88);
 }
 .nav-btn.active {
   color: #fff;
@@ -170,28 +173,28 @@
   transform: scale(0.98);
 }
 
-/* 渚ф爮鍖哄潡 */
+/* 侧栏区块 */
 .sidebar-section {
   margin-top: 30px;
 }
 .section-label {
   padding: 0 10px 10px;
-  color: #676771;
+  color: rgba(255, 255, 255, 0.34);
   font-size: 10px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   font-weight: 700;
 }
-/* tags锛氭枃瀛椾覆锛屼笉鐢?chip */
+/* tags：文字串，不用 chip */
 .tags-text {
   padding: 0 10px;
   font-size: 11.5px;
   line-height: 2;
-  color: var(--color-text-tertiary);
+  color: rgba(255, 255, 255, 0.46);
   letter-spacing: 0.02em;
 }
 .tags-text b {
-  color: #c6c6cc;
+  color: rgba(255, 255, 255, 0.78);
   font-weight: 550;
 }
 
@@ -200,7 +203,7 @@
   padding-top: 24px;
 }
 
-/* 闊充箰 dock锛堝厠鍒讹紝鏃犺竟妗嗗簳锛?*/
+/* 音乐 dock（克制，无边框底） */
 .music {
   display: grid;
   grid-template-columns: 36px minmax(0, 1fr) auto;
@@ -232,10 +235,11 @@
   font-size: 11px;
   margin-bottom: 3px;
   font-weight: 620;
+  color: rgba(255, 255, 255, 0.85);
 }
 .song small {
   font-size: 9.5px;
-  color: var(--color-text-tertiary);
+  color: rgba(255, 255, 255, 0.42);
 }
 .music-controls {
   display: flex;
@@ -265,18 +269,19 @@
   height: 11px;
 }
 
-/* 绀句氦琛岋紙缁嗙嚎鍥炬爣锛屾棤鏂规锛?*/
+/* 社交行（细线图标，无方框） */
 .social-row {
   display: flex;
   gap: 14px;
   margin-top: 18px;
   padding: 0 10px;
   flex-wrap: wrap;
+  align-items: center;
 }
 .social {
   display: grid;
   place-items: center;
-  color: #8e8e97;
+  color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
   transition:
     color var(--duration-ui) ease,
@@ -288,8 +293,27 @@
 .social:active {
   transform: scale(0.94);
 }
+/* 清屏入口：极小文字按钮 */
+.clear-screen {
+  margin-left: 2px;
+  margin-top: 14px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 10.5px;
+  cursor: pointer;
+  transition: color var(--duration-ui) ease;
+}
+.clear-screen:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+.clear-screen .v-icon {
+  font-size: 14px;
+}
 
-/* ============ Main 鍖?============ */
+/* ============ Main 区 ============ */
 .main-area {
   flex: 1;
   min-width: 0;
@@ -306,13 +330,13 @@
   border-radius: 9px;
 }
 
-/* 鍐呭鍒楋細闄愬埗瀹藉害锛屽彸渚х暀缁欏绾镐汉鐗?*/
+/* 内容列：限制宽度，右侧留给壁纸人物 */
 .content {
   max-width: 860px;
   padding: 64px 48px 64px 52px;
 }
 
-/* ============ Hero锛氱湡浜轰粙缁嶏紝鏃犳ā鏉挎劅 ============ */
+/* ============ Hero：真人介绍，无模板感 ============ */
 .hero {
   padding: 6px 0 42px;
   border-bottom: 1px solid var(--border-line);
@@ -334,6 +358,7 @@
   line-height: 1.06;
   letter-spacing: -0.03em;
   font-weight: 700;
+  color: #fff;
 }
 .hero-title .accent {
   color: var(--color-accent);
@@ -341,13 +366,13 @@
 .hero-copy {
   margin: 24px 0 0;
   max-width: 560px;
-  color: #c2c2ca;
+  color: rgba(255, 255, 255, 0.68);
   font-size: 15px;
   line-height: 1.95;
 }
 .hero-meta {
   margin-top: 26px;
-  color: var(--color-text-tertiary);
+  color: rgba(255, 255, 255, 0.44);
   font-size: 12px;
   letter-spacing: 0.02em;
 }
@@ -358,27 +383,27 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  color: var(--color-text-tertiary);
+  color: rgba(255, 255, 255, 0.44);
   font-size: 11.5px;
   font-variant-numeric: tabular-nums;
 }
 .status-row .sep {
-  color: #4a4a52;
+  color: rgba(255, 255, 255, 0.22);
 }
 .status-row strong {
-  color: #dcdce1;
+  color: rgba(255, 255, 255, 0.82);
   font-weight: 600;
 }
 .mini-quote {
   margin-top: 12px;
   border-left: 2px solid rgba(255, 137, 181, 0.5);
   padding-left: 12px;
-  color: #9a9aa4;
+  color: rgba(255, 255, 255, 0.52);
   font-size: 11.5px;
   line-height: 1.7;
 }
 
-/* ============ Search锛氳交閲忓伐鍏凤紝涓嶆í璺ㄥ叏瀹?============ */
+/* ============ Search：轻量工具，不横跨全宽 ============ */
 .search-wrap {
   padding: 30px 0 8px;
   max-width: 560px;
@@ -406,7 +431,7 @@
   height: 100%;
   border: 0;
   background: transparent;
-  color: #bdbdc5;
+  color: rgba(255, 255, 255, 0.62);
   padding: 0 15px 0 17px;
   display: flex;
   align-items: center;
@@ -429,7 +454,7 @@
   font-size: 13px;
 }
 .search input::placeholder {
-  color: var(--color-text-faint);
+  color: rgba(255, 255, 255, 0.32);
 }
 .search-submit {
   width: 42px;
@@ -441,7 +466,7 @@
   display: grid;
   place-items: center;
   cursor: pointer;
-  color: #b3b3bc;
+  color: rgba(255, 255, 255, 0.62);
   transition:
     background-color var(--duration-ui) ease,
     color var(--duration-ui) ease,
@@ -473,7 +498,7 @@
   background: rgba(255, 255, 255, 0.07);
 }
 
-/* ============ 鍖哄潡鏍囬 ============ */
+/* ============ 区块标题 ============ */
 .section-head {
   display: flex;
   align-items: end;
@@ -486,27 +511,33 @@
   font-size: 18px;
   letter-spacing: -0.02em;
   font-weight: 680;
+  color: #fff;
 }
 .section-head p {
   margin: 6px 0 0;
-  color: var(--color-text-tertiary);
+  color: rgba(255, 255, 255, 0.36);
   font-size: 11px;
 }
 
-/* ============ 椤圭洰鍖猴細1 涓讳綔鍝?+ 3 妯悜杞诲叆鍙?============ */
+/* ============ 项目区：1 主作品 + 3 横向轻入口 ============ */
 .projects-v3 {
   display: grid;
   gap: 26px;
 }
 
-/* 涓讳綔鍝侊細鍞竴鏄庢樉瀹瑰櫒锛堣瑙夋潈閲?~60%锛?*/
+/* 主作品：唯一明显容器，图从右自然渗入（作品封面感） */
 .showcase {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
   border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid var(--border-soft);
-  background: linear-gradient(115deg, rgba(21, 21, 26, 0.88), rgba(14, 14, 18, 0.7));
+  background: linear-gradient(
+    90deg,
+    rgba(15, 15, 18, 0.88) 0%,
+    rgba(15, 15, 18, 0.78) 58%,
+    rgba(15, 15, 18, 0.2) 100%
+  );
   text-align: left;
   color: inherit;
   cursor: pointer;
@@ -529,12 +560,14 @@
   flex-direction: column;
   justify-content: center;
   gap: 10px;
+  position: relative;
+  z-index: 1;
 }
 .showcase-kicker {
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-accent);
+  color: rgba(255, 255, 255, 0.5);
   font-weight: 700;
 }
 .showcase h4 {
@@ -543,15 +576,16 @@
   letter-spacing: -0.02em;
   font-weight: 700;
   line-height: 1.15;
+  color: #fff;
 }
 .showcase-desc {
   margin: 0;
-  color: #a6a6b0;
+  color: rgba(255, 255, 255, 0.64);
   font-size: 13px;
   line-height: 1.8;
 }
 .showcase-stack {
-  color: var(--color-text-tertiary);
+  color: rgba(255, 255, 255, 0.5);
   font-size: 11px;
   letter-spacing: 0.02em;
 }
@@ -560,7 +594,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #ececef;
+  color: rgba(255, 255, 255, 0.92);
   font-size: 12px;
   font-weight: 620;
 }
@@ -583,7 +617,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: saturate(0.92) brightness(0.82);
+  filter: saturate(0.95) brightness(0.92);
   transition: transform 480ms var(--ease-out);
 }
 .showcase:hover .showcase-visual img {
@@ -593,10 +627,10 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(14, 14, 18, 0.9), transparent 42%);
+  background: linear-gradient(90deg, rgba(15, 15, 18, 0.82), transparent 55%);
 }
 
-/* 娆＄骇鍏ュ彛锛氱粏绾垮垎闅旓紝鏃犲崱鐗?*/
+/* 次级入口：细线分隔，无卡片 */
 .projects-links {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -609,7 +643,7 @@
   gap: 10px;
   padding: 15px 2px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  color: #c8c8cf;
+  color: rgba(255, 255, 255, 0.72);
   cursor: pointer;
   transition:
     color var(--duration-ui) ease,
@@ -633,7 +667,7 @@
 }
 .entry-body span {
   display: block;
-  color: var(--color-text-tertiary);
+  color: rgba(255, 255, 255, 0.4);
   font-size: 11px;
   white-space: nowrap;
   overflow: hidden;
@@ -654,7 +688,7 @@
   transform: none;
 }
 
-/* ============ 鎶€鑳?/ 杩戝喌锛氭棤鍗★紝绾帓鐗?============ */
+/* ============ 技能 / 近况：无卡，纯排版 ============ */
 .utility-grid {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
@@ -674,10 +708,11 @@
 .utility-head strong {
   font-size: 13px;
   font-weight: 680;
+  color: #fff;
 }
 .utility-head span {
   font-size: 10px;
-  color: #6b6b74;
+  color: rgba(255, 255, 255, 0.34);
 }
 .skill-list {
   display: grid;
@@ -693,11 +728,11 @@
 .skill-row b {
   font-size: 10.5px;
   font-weight: 540;
-  color: #a8a8b1;
+  color: rgba(255, 255, 255, 0.58);
 }
 .skill-row b {
   text-align: right;
-  color: #7a7a83;
+  color: rgba(255, 255, 255, 0.44);
   font-variant-numeric: tabular-nums;
 }
 .bar {
@@ -742,30 +777,30 @@
   display: block;
   font-size: 11.5px;
   margin-bottom: 4px;
+  color: rgba(255, 255, 255, 0.85);
 }
 .now span {
   display: block;
-  color: var(--color-text-tertiary);
+  color: rgba(255, 255, 255, 0.42);
   font-size: 10px;
 }
 .now em {
   font-style: normal;
-  color: #8e8e97;
+  color: rgba(255, 255, 255, 0.5);
   font-size: 9.5px;
 }
 
-/* ============ 椤佃剼 ============ */
+/* ============ 页脚 ============ */
 .footer {
   display: flex;
   justify-content: space-between;
   gap: 20px;
   align-items: center;
   padding: 44px 0 4px;
-  color: #5d5d66;
+  color: rgba(255, 255, 255, 0.34);
   font-size: 10.5px;
 }
 .footer b {
-  color: #85858e;
+  color: rgba(255, 255, 255, 0.5);
   font-weight: 550;
 }
-

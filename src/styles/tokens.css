@@ -11,11 +11,11 @@
   --color-soft: rgba(255, 255, 255, 0.065);
   --color-soft-hover: rgba(255, 255, 255, 0.1);
 
-  /* 文字 */
-  --color-text: #f7f7f8;
-  --color-text-secondary: #a9a9b1;
-  --color-text-tertiary: #777781;
-  --color-text-faint: #64646d;
+  /* 文字：三级明度分层（0.94 / 0.62 / 0.40） */
+  --color-text: #fafafb;
+  --color-text-secondary: rgba(255, 255, 255, 0.64);
+  --color-text-tertiary: rgba(255, 255, 255, 0.4);
+  --color-text-faint: rgba(255, 255, 255, 0.32);
 
   /* 品牌色：粉色仅作 accent */
   --color-accent: #ff89b5;

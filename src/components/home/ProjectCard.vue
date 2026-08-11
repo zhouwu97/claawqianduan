@@ -2,12 +2,12 @@
   <!-- 主作品 -->
   <a v-if="variant === 'showcase'" class="showcase" :href="item.url" target="_blank" rel="noreferrer" @click.prevent="handleClick">
     <div class="showcase-body">
-      <div class="showcase-kicker">Featured · {{ item.title.split('·')[0].trim() }}</div>
+      <div class="showcase-kicker">正在做</div>
       <h4>{{ item.title }}</h4>
       <p class="showcase-desc">{{ item.description }}</p>
       <div class="showcase-stack">{{ stack }}</div>
       <div class="showcase-cta">
-        View project
+        查看项目
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M5 12h14M14 7l5 5-5 5"/></svg>
       </div>
     </div>

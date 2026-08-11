@@ -94,18 +94,3 @@ a {
   filter: brightness(var(--leleo-brightness, 85%));
 }
 
-/* 视频壁纸"清屏"开关（仅视频壁纸时有用，折叠在右缘） */
-.floating-switch-container {
-  position: fixed;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 60;
-}
-.floating-switch {
-  transform: translateX(53%);
-  transition: transform var(--duration-ui) var(--ease-out);
-}
-.floating-switch:hover {
-  transform: translateX(0);
-}

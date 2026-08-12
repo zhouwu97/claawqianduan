@@ -528,6 +528,9 @@
 }
 
 /* ============ 区块标题：editorial index（01/02/03） ============ */
+.section {
+  position: relative;
+}
 .section-head {
   display: flex;
   align-items: end;
@@ -535,6 +538,7 @@
   gap: 24px;
   padding: 44px 0 24px;
   border-top: 1px solid var(--border-line);
+  position: relative;
 }
 .section-index {
   font-size: 10.5px;
@@ -543,6 +547,10 @@
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   margin-bottom: 10px;
+}
+.section-index b {
+  color: rgba(255, 137, 181, 0.72);
+  font-weight: 800;
 }
 .section-head h3 {
   margin: 0;
@@ -557,10 +565,59 @@
   font-size: 11px;
 }
 
+/* 标题 mask 遮罩：子元素在遮罩下滑入（motion 见 motion.css） */
+.scene-line {
+  overflow: hidden;
+}
+
+/* 场景幽灵数字：大号 02 / 03，低透明衬底（motion 见 motion.css） */
+.scene-number {
+  position: absolute;
+  right: 0;
+  top: 28px;
+  pointer-events: none;
+  font-size: clamp(86px, 11vw, 160px);
+  line-height: 0.8;
+  font-weight: 900;
+  letter-spacing: -0.08em;
+  color: rgba(255, 255, 255, 0.025);
+  z-index: 0;
+  user-select: none;
+}
+
+/* 主作品 kicker：小号字母间距标签 */
+.kicker {
+  font-size: 10px;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: rgba(255, 137, 181, 0.74);
+  margin-bottom: 14px;
+}
+
+/* 导航点击 Scene Sweep：固定横线，Y 由 JS 定位（动画见 motion.css） */
+.scene-sweep {
+  position: fixed;
+  left: var(--rail, 224px);
+  right: 0;
+  top: 0;
+  height: 1px;
+  z-index: 35;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+  transform: translateY(var(--sweep-y, -10px)) scaleX(0);
+  opacity: 0;
+}
+:root {
+  --rail: 224px;
+}
+
 /* ============ 项目区：1 主作品 + 3 横向轻入口 ============ */
 .projects-v3 {
   display: grid;
   gap: 26px;
+  position: relative;
+  z-index: 1;
 }
 
 /* 主作品：editorial 排版 + 渐变融合
@@ -672,13 +729,6 @@
   height: 100%;
   object-fit: cover;
   filter: saturate(0.97) brightness(0.95);
-}
-.showcase-kicker {
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.5);
-  font-weight: 700;
 }
 .showcase h4 {
   margin: 0;
@@ -876,7 +926,6 @@
   height: 100%;
   border-radius: 999px;
   background: linear-gradient(90deg, var(--color-accent), var(--color-purple));
-  transition: width 600ms var(--ease-out);
 }
 
 .now {
@@ -967,150 +1016,4 @@
   transition:
     opacity 160ms var(--ease-out),
     transform 160ms var(--ease-out);
-}
-
-
-/* ============================================
-   V3.3 Signature Motion
-   A. 电影式入场（.intro 由 HomeShell 控制，会话内一次）
-   ============================================ */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: none; }
-}
-@keyframes railIn {
-  from { opacity: 0; transform: translateX(-12px); }
-  to { opacity: 1; transform: none; }
-}
-@keyframes titleReveal {
-  from { transform: translateY(105%); }
-  to { transform: translateY(0); }
-}
-.intro .rail {
-  animation: railIn 420ms var(--ease-out) 80ms both;
-}
-.intro .hero-index {
-  animation: fadeUp 430ms var(--ease-out) 80ms both;
-}
-.intro .hero-title-inner {
-  transform: translateY(105%);
-  animation: titleReveal 560ms var(--ease-out) 120ms both;
-}
-.intro .hero-copy {
-  animation: fadeUp 460ms var(--ease-out) 190ms both;
-}
-.intro .hero-meta {
-  animation: fadeUp 430ms var(--ease-out) 250ms both;
-}
-.intro .hero-status {
-  animation: fadeUp 430ms var(--ease-out) 250ms both;
-}
-.intro .search-wrap {
-  animation: fadeUp 420ms var(--ease-out) 340ms both;
-}
-
-/* ============================================
-   B. SYLUlive showcase reveal（IntersectionObserver 触发 .is-revealed）
-   播一次永久 settle，滚出滚入不重播
-   ============================================ */
-.showcase {
-  opacity: 0.35;
-  transform: translateY(18px) scale(0.985);
-  transition:
-    opacity 520ms var(--ease-out),
-    transform 520ms var(--ease-out),
-    border-color 180ms ease,
-    box-shadow 220ms var(--ease-out);
-}
-.showcase.is-revealed {
-  opacity: 1;
-  transform: none;
-}
-.showcase-visual {
-  position: relative;
-  min-height: 230px;
-  overflow: hidden;
-  clip-path: inset(0 24% 0 0);
-  transition: clip-path 650ms var(--ease-out);
-}
-.is-revealed .showcase-visual {
-  clip-path: inset(0);
-}
-.showcase-body {
-  opacity: 0;
-  transform: translateY(6px);
-  transition:
-    opacity 460ms var(--ease-out) 60ms,
-    transform 460ms var(--ease-out) 60ms;
-}
-.is-revealed .showcase-body {
-  opacity: 1;
-  transform: none;
-}
-.showcase-cta {
-  opacity: 0;
-  transition: opacity 460ms var(--ease-out) 110ms;
-}
-.is-revealed .showcase-cta {
-  opacity: 1;
-}
-/* hover 仍在 media 内覆盖 transform（见上文），此处仅还原 reveal 态
-   并保证 hover 位移用 180ms，而非 reveal 的 520ms */
-@media (hover: hover) and (pointer: fine) {
-  .showcase {
-    transition:
-      opacity 520ms var(--ease-out),
-      transform 180ms var(--ease-out),
-      border-color 180ms ease,
-      box-shadow 220ms var(--ease-out);
-  }
-  .showcase.is-revealed:hover {
-    transform: translateY(-2px);
-  }
-}
-
-/* ============================================
-   C. 清屏场景切换：UI 退场 → 壁纸成主体
-   ============================================ */
-.clear-enter-active {
-  transition:
-    opacity 320ms ease,
-    transform 320ms ease;
-}
-.clear-enter-from {
-  opacity: 0;
-  transform: scale(0.992);
-}
-.clear-leave-active {
-  transition:
-    opacity 240ms ease,
-    transform 240ms ease;
-}
-.clear-leave-to {
-  opacity: 0;
-  transform: scale(0.992);
-}
-.clear-leave-active .rail {
-  transition:
-    opacity 220ms ease,
-    transform 220ms ease;
-}
-.clear-leave-to .rail {
-  opacity: 0;
-  transform: translateX(-8px);
-}
-.clear-restore-enter-active {
-  transition:
-    opacity 180ms var(--ease-out) 340ms,
-    transform 180ms var(--ease-out) 340ms;
-  pointer-events: none;
-}
-.clear-restore-enter-to {
-  pointer-events: auto;
-}
-.clear-restore-leave-active {
-  transition:
-    opacity 120ms ease,
-    transform 120ms ease;
-  pointer-events: none;
 }

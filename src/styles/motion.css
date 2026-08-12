@@ -1,35 +1,382 @@
 /* ============================================
-   Motion — 轻量高质量动效
+   Motion — 全站动效统一入口
    规则：
-   - 高频 UI 动画 <= 200ms，普通 <= 300ms
-   - button :active scale(.97)
-   - card hover 只 translateY(-2px)，img scale(1.014)
-   - 只动 transform / opacity / color / border-color / background-color
+   - 只动 transform / opacity / clip-path / color / background-color
    - 禁止 transition: all；禁止 width/height/left/top 动画
-   - Signature Motion：首次进入 / showcase reveal / 清屏切换（见 layout.css）
+   - 重播机制：ScrollReveal 只切换 .in-view 类，stagger 全部用 transition-delay
+   - 高频 UI 动画 <= 200ms，场景 Reveal 用 --duration-scene 级
    ============================================ */
 
-/* 抽屉 / bottom sheet：240-320ms */
+/* ============ Nav indicator：共享粉线弹性跟随（Persistent） ============ */
+.nav-indicator {
+  transition:
+    transform 420ms var(--ease-spring),
+    opacity 120ms ease;
+}
+
+/* ============ 抽屉 / bottom sheet：240-320ms ============ */
 .v-navigation-drawer,
 .v-bottom-sheet__content {
   transition-duration: var(--duration-panel);
 }
 
-/* prefers-reduced-motion：更温和，不是零反馈。
-   位移/mask/scale 移除，保留 opacity/color 状态反馈（120-180ms）。 */
-@media (prefers-reduced-motion: reduce) {
-  /* A. 电影式入场 → 只保留 180ms 透明度淡入，无位移/mask/背景缩放 */
-  .page-bg.intro {
-    animation: none;
+/* ============================================
+   A. 电影式入场（.intro 由 HomeShell 控制，会话内一次）
+   ============================================ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes railIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes titleReveal {
+  from { transform: translateY(105%); }
+  to { transform: translateY(0); }
+}
+.intro .rail {
+  animation: railIn 420ms var(--ease-out) 80ms both;
+}
+.intro .hero-index {
+  animation: fadeUp 430ms var(--ease-out) 80ms both;
+}
+.intro .hero-title-inner {
+  transform: translateY(105%);
+  animation: titleReveal 560ms var(--ease-out) 120ms both;
+}
+.intro .hero-copy {
+  animation: fadeUp 460ms var(--ease-out) 190ms both;
+}
+.intro .hero-meta {
+  animation: fadeUp 430ms var(--ease-out) 250ms both;
+}
+.intro .hero-status {
+  animation: fadeUp 430ms var(--ease-out) 250ms both;
+}
+.intro .search-wrap {
+  animation: fadeUp 420ms var(--ease-out) 340ms both;
+}
+
+/* ============================================
+   B. Hero Return：从下方滚回首页的轻量动画
+   不重播幕布、不逐字；结束态=base，remove 类无跳变
+   ============================================ */
+.hero-return .hero-title-inner {
+  animation: heroReturnTitle 520ms var(--ease-spring) both;
+}
+.hero-return .hero-copy {
+  animation: heroReturnUp 460ms var(--ease-out) 50ms both;
+}
+.hero-return .hero-meta {
+  animation: heroReturnUp 460ms var(--ease-out) 90ms both;
+}
+.hero-return .hero-status {
+  animation: heroReturnUp 460ms var(--ease-out) 120ms both;
+}
+.hero-return .search-wrap {
+  animation: heroReturnUp 460ms var(--ease-out) 130ms both;
+}
+@keyframes heroReturnTitle {
+  from { opacity: 0.55; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes heroReturnUp {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ============================================
+   C. Section 标题 Reveal（.section.in-view 由 useScrollReveal 驱动）
+   01/02 index → 标题 → 副标题 mask 滑入，可重播
+   ============================================ */
+.section-head .scene-line > div > * {
+  opacity: 0;
+  transform: translateY(110%);
+  transition:
+    transform 760ms var(--ease-spring),
+    opacity 500ms ease;
+}
+#projects.in-view .section-head .scene-line > div > *,
+#skills.in-view .section-head .scene-line > div > * {
+  opacity: 1;
+  transform: none;
+}
+#projects.in-view .section-head .scene-line > div > *:nth-child(2),
+#skills.in-view .section-head .scene-line > div > *:nth-child(2) {
+  transition-delay: 50ms;
+}
+#projects.in-view .section-head .scene-line > div > *:nth-child(3),
+#skills.in-view .section-head .scene-line > div > *:nth-child(3) {
+  transition-delay: 100ms;
+}
+
+/* ============================================
+   D. 场景幽灵数字 02 / 03 重播
+   ============================================ */
+.scene-number {
+  opacity: 0;
+  transform: translateX(44px) scale(0.92);
+  transition:
+    transform var(--duration-scene) var(--ease-spring),
+    opacity 700ms ease;
+}
+#projects.in-view .scene-number,
+#skills.in-view .scene-number {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+}
+
+/* ============================================
+   E. PROJECT Signature Reveal（.projects-v3.in-view）
+   时间轴：wrapper 0 / 图片 60 / kicker 140 / 标题 200 / desc 280 /
+           stack 350·400·450 / cta 520
+   ============================================ */
+.showcase {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 520ms ease,
+    transform 850ms var(--ease-spring),
+    border-color 180ms ease;
+}
+.projects-v3.in-view .showcase {
+  opacity: 1;
+  transform: none;
+}
+.showcase::after {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.65);
+  transition:
+    transform 900ms var(--ease-spring) 110ms,
+    opacity 500ms ease 110ms;
+}
+.projects-v3.in-view .showcase::after {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+/* 图片：右侧 clip 揭幕 + 轻微平移（方向始终保持一致） */
+.showcase-visual {
+  clip-path: inset(0 100% 0 0);
+  transform: translateX(30px);
+  transition:
+    clip-path 950ms var(--ease-spring) 60ms,
+    transform 950ms var(--ease-spring) 60ms;
+}
+.projects-v3.in-view .showcase-visual {
+  clip-path: inset(0);
+  transform: none;
+}
+/* 文字区：带滚动方向感（--enter-y），整体入 */
+.showcase-body {
+  opacity: 0;
+  transform: translateY(var(--enter-y, 16px));
+  transition:
+    opacity 520ms ease 140ms,
+    transform 680ms var(--ease-spring) 140ms;
+}
+.projects-v3.in-view .showcase-body {
+  opacity: 1;
+  transform: none;
+}
+[data-scroll-dir="down"] .showcase-body { --enter-y: 16px; }
+[data-scroll-dir="up"] .showcase-body { --enter-y: -10px; }
+/* 内部元素：仅 opacity，stagger 由 transition-delay 控制 */
+.kicker,
+.showcase h4,
+.showcase-desc,
+.showcase-stack li,
+.showcase-cta {
+  opacity: 0;
+  transition: opacity 520ms ease;
+}
+.projects-v3.in-view .kicker { opacity: 1; transition-delay: 140ms; }
+.projects-v3.in-view .showcase h4 { opacity: 1; transition-delay: 200ms; }
+.projects-v3.in-view .showcase-desc { opacity: 1; transition-delay: 280ms; }
+.projects-v3.in-view .showcase-stack li { opacity: 1; }
+.projects-v3.in-view .showcase-stack li:nth-child(1) { transition-delay: 350ms; }
+.projects-v3.in-view .showcase-stack li:nth-child(2) { transition-delay: 400ms; }
+.projects-v3.in-view .showcase-stack li:nth-child(3) { transition-delay: 450ms; }
+.projects-v3.in-view .showcase-cta { opacity: 1; transition-delay: 520ms; }
+
+/* hover / active 在 reveal 态下仍生效（提高特异性覆盖 in-view 的 transform） */
+@media (hover: hover) and (pointer: fine) {
+  .projects-v3.in-view .showcase:hover {
+    transform: translateY(-2px);
   }
+}
+.projects-v3.in-view .showcase:active {
+  transform: translateY(-1px) scale(0.995);
+}
+
+/* ============================================
+   F. 次级项目入口 stagger（洛谷 / 歌单 / Treasure）
+   ============================================ */
+.entry {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 520ms ease,
+    transform 650ms var(--ease-spring),
+    color 180ms ease,
+    border-color 180ms ease;
+}
+.projects-v3.in-view .entry { opacity: 1; transform: none; }
+.projects-v3.in-view .entry:nth-child(1) { transition-delay: 180ms; }
+.projects-v3.in-view .entry:nth-child(2) { transition-delay: 250ms; }
+.projects-v3.in-view .entry:nth-child(3) { transition-delay: 320ms; }
+
+/* ============================================
+   G. Skills：scaleX 增长（禁 width），stagger 0/70/140/210/280
+   ============================================ */
+.bar i {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 950ms var(--ease-spring);
+  transition-delay: var(--d, 0ms);
+}
+.utility.in-view .bar i {
+  transform: scaleX(var(--v, 0));
+}
+
+/* ============================================
+   H. Current Activity 重播：opacity + translateX，120/190/260
+   ============================================ */
+.now {
+  opacity: 0;
+  transform: translateX(18px);
+  transition:
+    opacity 500ms ease var(--d, 0ms),
+    transform 700ms var(--ease-spring) var(--d, 0ms);
+}
+.utility.in-view .now {
+  opacity: 1;
+  transform: none;
+}
+
+/* ============================================
+   I. Mobile：Dock indicator / More Sheet 过渡
+   ============================================ */
+.dock-indicator {
+  transition: transform 440ms var(--ease-spring);
+}
+.more-sheet {
+  transition: transform 440ms var(--ease-spring);
+}
+.sheet-backdrop {
+  transition: opacity 260ms ease;
+}
+
+/* ============================================
+   J. 导航点击 Scene Sweep
+   ============================================ */
+.scene-sweep.play {
+  animation: sceneSweep 620ms var(--ease-in-out);
+}
+@keyframes sceneSweep {
+  0% { opacity: 0; transform: translateY(var(--sweep-y, -10px)) scaleX(0); }
+  35% { opacity: 0.85; transform: translateY(var(--sweep-y, -10px)) scaleX(0.72); }
+  100% { opacity: 0; transform: translateY(var(--sweep-y, -10px)) scaleX(1); }
+}
+
+/* ============================================
+   K. 清屏场景切换：UI 退场 → 壁纸成主体
+   ============================================ */
+.clear-enter-active {
+  transition:
+    opacity 320ms ease,
+    transform 320ms ease;
+}
+.clear-enter-from {
+  opacity: 0;
+  transform: scale(0.992);
+}
+.clear-leave-active {
+  transition:
+    opacity 240ms ease,
+    transform 240ms ease;
+}
+.clear-leave-to {
+  opacity: 0;
+  transform: scale(0.992);
+}
+.clear-leave-active .rail {
+  transition:
+    opacity 220ms ease,
+    transform 220ms ease;
+}
+.clear-leave-to .rail {
+  opacity: 0;
+  transform: translateX(-8px);
+}
+.clear-restore-enter-active {
+  transition:
+    opacity 180ms var(--ease-out) 340ms,
+    transform 180ms var(--ease-out) 340ms;
+  pointer-events: none;
+}
+.clear-restore-enter-to {
+  pointer-events: auto;
+}
+.clear-restore-leave-active {
+  transition:
+    opacity 120ms ease,
+    transform 120ms ease;
+  pointer-events: none;
+}
+
+/* ============================================
+   L. prefers-reduced-motion：更温和，不是零反馈
+   位移/mask/scale/clip 移除，保留 opacity 级 150-180ms 状态反馈
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  /* 一次性/装饰类动画直接禁用 */
+  .scene-sweep,
+  .dock-indicator,
+  .nav-indicator {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* Reveal 类：强制静态可见，无位移/mask/scale */
+  .scene-number,
+  .section-head .scene-line > div > *,
+  .showcase,
+  .showcase::after,
+  .showcase-visual,
+  .showcase-body,
+  .kicker,
+  .showcase h4,
+  .showcase-desc,
+  .showcase-stack li,
+  .showcase-cta,
+  .entry,
+  .bar i,
+  .now {
+    animation: none !important;
+    transition-duration: 150ms !important;
+    transform: none !important;
+    opacity: 1 !important;
+    clip-path: none !important;
+  }
+
+  /* 首屏 intro / hero return → 仅 180ms 透明度淡入 */
   .intro .rail,
   .intro .hero-index,
   .intro .hero-title-inner,
   .intro .hero-copy,
   .intro .hero-meta,
   .intro .hero-status,
-  .intro .search-wrap {
-    animation: fadeOpacity 180ms ease both;
+  .intro .search-wrap,
+  .hero-return .hero-title-inner,
+  .hero-return .hero-copy,
+  .hero-return .hero-meta,
+  .hero-return .hero-status,
+  .hero-return .search-wrap {
+    animation: fadeOpacity 180ms ease both !important;
+    transform: none !important;
   }
   @keyframes fadeOpacity {
     from { opacity: 0; }
@@ -38,44 +385,11 @@
   .intro .hero-title-inner {
     transform: translateY(0);
   }
-
-  /* B. showcase reveal → 只保留 180ms 透明度，无位移/scale/clip */
-  .showcase {
-    opacity: 0;
-    transform: none;
-    transition: opacity 180ms ease;
-  }
-  .showcase.is-revealed {
-    opacity: 1;
-  }
-  .showcase-visual,
-  .showcase-body,
-  .showcase-cta {
-    clip-path: none;
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
-
-  /* C. 清屏切换 → crossfade 180ms，无 scale/translate */
-  .clear-enter-active,
-  .clear-leave-active {
-    transition: opacity 180ms ease;
-  }
-  .clear-enter-from,
-  .clear-leave-to,
-  .clear-leave-to .rail {
-    opacity: 0;
-    transform: none;
-  }
-  .clear-leave-active .rail {
-    transition: opacity 180ms ease;
+  .page-bg.intro {
+    animation: none;
   }
 
   /* 微交互：无位移，保留颜色反馈 */
-  .nav-indicator {
-    transition: none;
-  }
   .showcase,
   .showcase-visual img,
   .showcase-cta svg,

@@ -11,6 +11,7 @@
     </video>
     <div class="page-bg" :class="{ intro: introActive, 'clear-mode': isClearScreen }"></div>
     <div class="noise"></div>
+    <div class="scene-sweep" ref="sweepEl"></div>
 
     <Transition name="clear">
       <div v-show="!isloading && !isClearScreen" class="layout" :class="{ intro: introActive }">
@@ -19,6 +20,7 @@
           :configdata="configdata"
           :current-song="currentSong"
           :is-playing="isPlaying"
+          :active-nav="activeNav"
           @open-settings="dialog1 = true"
           @open-about="dialog2 = true"
           @toggle-play="togglePlay"
@@ -32,34 +34,40 @@
 
       <main class="main-area" ref="mainEl">
         <div class="content">
-          <HeroIntro :hero-data="heroData" :formatted-time="formattedTime" :formatted-date-short="formattedDateShort" />
+          <HeroIntro :hero-data="heroData" :formatted-time="formattedTime" :formatted-date-short="formattedDateShort" :returning="heroReturning" />
 
           <div class="search-wrap">
             <SearchBar />
           </div>
 
-          <section id="projects">
+          <section id="projects" class="section">
+            <div class="scene-number">02</div>
             <div class="section-head">
-              <div>
-                <div class="section-index">02 / PROJECT</div>
-                <h3>项目</h3>
-                <p>在做的东西，和常去的地方。</p>
+              <div class="scene-line">
+                <div>
+                  <div class="section-index"><b>02</b> / PROJECT</div>
+                  <h3>项目</h3>
+                  <p>在做的东西，和常去的地方。</p>
+                </div>
               </div>
             </div>
-            <ProjectShowcase :projects="displayProjects" :configdata="configdata" @open-treasure="treasureOpen = true" />
+            <ProjectShowcase :projects="displayProjects" :configdata="configdata" :active="reveal.state.projects" @open-treasure="treasureOpen = true" />
           </section>
 
-          <section id="skills">
+          <section id="skills" class="section">
+            <div class="scene-number">03</div>
             <div class="section-head">
-              <div>
-                <div class="section-index">03 / NOW</div>
-                <h3>技能与近况</h3>
-                <p>常用技术栈，和最近在做的事。</p>
+              <div class="scene-line">
+                <div>
+                  <div class="section-index"><b>03</b> / NOW</div>
+                  <h3>技能与近况</h3>
+                  <p>常用技术栈，和最近在做的事。</p>
+                </div>
               </div>
             </div>
             <div class="utility-grid">
-              <SkillsOverview :skills="skillList" />
-              <CurrentActivity :items="nowItems" />
+              <SkillsOverview :skills="skillList" :active="reveal.state.now" />
+              <CurrentActivity :items="nowItems" :active="reveal.state.now" />
             </div>
           </section>
 
@@ -71,6 +79,17 @@
       </main>
       </div>
     </Transition>
+
+    <MobileNav
+      v-show="!isClearScreen"
+      :active="activeNav"
+      :configdata="configdata"
+      :current-song="currentSong"
+      @navigate="scrollToSection"
+      @open-about="dialog2 = true"
+      @open-settings="openMusicSettings"
+      @clear-screen="isClearScreen = !isClearScreen"
+    />
 
     <TreasureDrawer v-model="treasureOpen" :sites="treasureSites" />
 
@@ -105,6 +124,7 @@ import SearchBar from '../components/home/SearchBar.vue'
 import ProjectShowcase from '../components/home/ProjectShowcase.vue'
 import SkillsOverview from '../components/home/SkillsOverview.vue'
 import CurrentActivity from '../components/home/CurrentActivity.vue'
+import MobileNav from '../components/home/MobileNav.vue'
 import TreasureDrawer from '../components/treasure/TreasureDrawer.vue'
 import SettingsDialog from '../components/settings/SettingsDialog.vue'
 import AboutDialog from '../components/settings/AboutDialog.vue'
@@ -112,8 +132,10 @@ import { useSiteConfig } from '../composables/useSiteConfig.js'
 import { useClock } from '../composables/useClock.js'
 import { useMusicPlayer } from '../composables/useMusicPlayer.js'
 import { useWallpaper } from '../composables/useWallpaper.js'
+import { useScrollReveal } from '../composables/useScrollReveal.js'
+import { useScrollSpy } from '../composables/useScrollSpy.js'
 
-const { xs } = useDisplay()
+const { xs, width } = useDisplay()
 const { loadConfig, applyMeta, applyThemeVars } = useSiteConfig()
 const { formattedTime, formattedDateShort, start: startClock } = useClock()
 const music = useMusicPlayer()
@@ -130,6 +152,7 @@ const treasureOpen = ref(false)
 const audioEl = ref(null)
 const videoEl = ref(null)
 const mainEl = ref(null)
+const sweepEl = ref(null)
 /* 持久 visited 与运行时 introActive 分离：
    - hasVisited：会话内是否看过（不直接当动画状态）
    - introActive：cinematic intro 实时开关，动画播完即关
@@ -212,41 +235,89 @@ const displayProjects = computed(() => {
   }))
 })
 
-/* ---------- 交互 ---------- */
-function scrollToSection(id) {
-  const main = document.querySelector('.main-area')
-  if (!main) return
-  if (id === 'top') {
-    // .main-area 自身就是滚动容器，直接改其 scrollTop
-    main.scrollTo({ top: 0, behavior: 'smooth' })
-    return
-  }
-  const target = document.getElementById(id)
-  if (!target) return
-  const mainRect = main.getBoundingClientRect()
-  const targetRect = target.getBoundingClientRect()
-  // 明确计算 target 相对 .main-area 的偏移，不依赖浏览器猜滚动祖先
-  main.scrollTo({
-    top: main.scrollTop + targetRect.top - mainRect.top,
-    behavior: 'smooth'
-  })
-}
+/* ---------- Motion：统一可重播 Reveal + ScrollSpy ----------
+   滚动容器：桌面为 .main-area（内部滚动），移动端为 viewport（body 滚动） */
+const isMobileLayout = computed(() => width.value <= 767)
+const reveal = useScrollReveal({
+  enterThreshold: isMobileLayout.value ? 0.22 : 0.28,
+  leaveOffset: isMobileLayout.value ? 0.03 : 0.04,
+})
+const spy = useScrollSpy()
+/* 顶层 ref：模板自动解包（嵌套对象里的 ref 不会解包） */
+const activeNav = spy.active
+let scroller = null
 
-function openMusicSettings() { dialog1.value = true; tab.value = 'tab-3' }
+const heroReturning = ref(false)
+let heroReturnTimer = null
+let heroHasLeft = false
+const HERO_LEAVE = 260
+const HERO_BACK = 80
 
-/* 背景二层 scroll parallax：背景 0.15 速，不跟鼠标，rAF 节流
+/* 背景二层 scroll parallax：仅桌面内部滚动容器，rAF 节流
    prefers-reduced-motion 下禁用 */
 const prefersReduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 let parallaxRaf = 0
 
-function onMainScroll() {
-  if (prefersReduced) return
-  cancelAnimationFrame(parallaxRaf)
-  parallaxRaf = requestAnimationFrame(() => {
-    const sc = mainEl.value ? mainEl.value.scrollTop : 0
-    document.documentElement.style.setProperty('--bg-parallax', `${Math.round(sc * -0.15)}px`)
-  })
+function onAnyScroll() {
+  // 背景 parallax：只对内部滚动容器生效（桌面），避免移动端 body 滚动带动背景
+  if (!prefersReduced && scroller) {
+    cancelAnimationFrame(parallaxRaf)
+    parallaxRaf = requestAnimationFrame(() => {
+      document.documentElement.style.setProperty('--bg-parallax', `${Math.round(scroller.scrollTop * -0.15)}px`)
+    })
+  }
+  // Hero Return：滚过 hero 再回来 → 轻量动画（不重播幕布）
+  const y = scroller ? scroller.scrollTop : (window.scrollY || 0)
+  if (y > HERO_LEAVE && !heroHasLeft) {
+    heroHasLeft = true
+  } else if (y <= HERO_BACK && heroHasLeft) {
+    heroHasLeft = false
+    heroReturning.value = true
+    clearTimeout(heroReturnTimer)
+    heroReturnTimer = setTimeout(() => { heroReturning.value = false }, 700)
+  }
 }
+
+/* 导航点击 Scene Sweep：0ms 扫线 → 60ms 滚动 → 620ms 扫完 */
+function playSweep(target) {
+  if (prefersReduced || !sweepEl.value || isMobileLayout.value) return
+  if (!target) return
+  const r = target.getBoundingClientRect()
+  sweepEl.value.style.setProperty('--sweep-y', `${Math.max(80, Math.min(window.innerHeight - 80, r.top + 42))}px`)
+  sweepEl.value.classList.remove('play')
+  void sweepEl.value.offsetWidth
+  sweepEl.value.classList.add('play')
+}
+
+function scrollToSection(id) {
+  spy.setActive(id === 'top' ? 'top' : id)
+  const target = id === 'top' ? null : document.getElementById(id)
+  playSweep(target)
+  // 桌面：.main-area 内部滚动；移动端：body 滚动（-76 让 section 顶部让开顶部胶囊）
+  setTimeout(() => {
+    if (!scroller) {
+      if (id === 'top') {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      } else if (target) {
+        window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - 76, behavior: 'smooth' })
+      }
+      return
+    }
+    if (id === 'top') {
+      scroller.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+    if (!target) return
+    const mainRect = scroller.getBoundingClientRect()
+    const targetRect = target.getBoundingClientRect()
+    scroller.scrollTo({
+      top: scroller.scrollTop + targetRect.top - mainRect.top,
+      behavior: 'smooth'
+    })
+  }, 60)
+}
+
+function openMusicSettings() { dialog1.value = true; tab.value = 'tab-3' }
 
 const year = new Date().getFullYear()
 
@@ -265,6 +336,19 @@ onMounted(async () => {
   applyMeta(configdata.value)
   applyThemeVars(configdata.value)
   const imageurl = selectBackground(configdata.value, xs.value)
+
+  // 滚动模型：桌面 = .main-area 内部滚动；移动端 = body 滚动（viewport）
+  // 注意：不能用 scrollHeight 探测——onMounted 时 layout 仍 display:none，两者都是 0
+  scroller = width.value > 767 ? mainEl.value : null
+
+  reveal.start(scroller)
+  spy.start(scroller)
+  const projectsEl = document.getElementById('projects')
+  const skillsEl = document.getElementById('skills')
+  // 兄弟相对 reset：A 离开 enter 区且 B 已进入 → A 重置（任何内容高度下都可达）
+  if (projectsEl) reveal.register(projectsEl, 'projects', { resetBy: skillsEl })
+  if (skillsEl) reveal.register(skillsEl, 'now', { resetBy: projectsEl })
+  ;(scroller || window).addEventListener('scroll', onAnyScroll, { passive: true })
 
   const loadImage = () => {
     // 预载真正展示的项目图（新 projects 结构，兼容旧字段）
@@ -312,7 +396,6 @@ onMounted(async () => {
   })
 
   registerAudio(audioEl.value)
-  if (mainEl.value) mainEl.value.addEventListener('scroll', onMainScroll, { passive: true })
   try {
     await getMusicInfo(configdata.value)
     setupAudioListener()
@@ -323,7 +406,8 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   clearTimeout(introTimer)
+  clearTimeout(heroReturnTimer)
   cancelAnimationFrame(parallaxRaf)
-  if (mainEl.value) mainEl.value.removeEventListener('scroll', onMainScroll)
+  ;(scroller || window).removeEventListener('scroll', onAnyScroll)
 })
 </script>

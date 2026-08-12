@@ -1,7 +1,8 @@
 <template>
   <!-- 主作品：editorial 排版 -->
-  <a v-if="variant === 'showcase'" class="showcase" :class="{ 'is-revealed': revealed }" :href="item.url" target="_blank" rel="noreferrer" @click="handleClick">
+  <a v-if="variant === 'showcase'" class="showcase" :class="{ 'in-view': active }" :href="item.url" target="_blank" rel="noreferrer" @click="handleClick">
     <div class="showcase-body">
+      <div class="kicker" v-if="showKicker">{{ showKicker }}</div>
       <h4><span v-for="(line, i) in titleLines" :key="i">{{ line }}<br v-if="i < titleLines.length - 1"></span></h4>
       <p class="showcase-desc">{{ item.description }}</p>
       <ul class="showcase-stack">
@@ -31,7 +32,11 @@
 import { computed } from 'vue'
 
 export default {
-  props: ['item', 'variant', 'revealed'],
+  props: {
+    item: { type: Object, required: true },
+    variant: { type: String, default: 'entry' },
+    active: { type: Boolean, default: false },
+  },
   emits: ['open-treasure'],
   setup(props, { emit }) {
     // 两行标题："沈理校园 · SYLUlive" → ["沈理校园", "SYLUlive"]
@@ -43,13 +48,17 @@ export default {
       if (props.item.tags && props.item.tags.length) return props.item.tags
       return (props.item.subtitle || '').split('·').map(s => s.trim()).filter(Boolean)
     })
+    // kicker：有 status 徽标的主作品显示固定文案；也可用字段覆盖
+    const showKicker = computed(() =>
+      props.item.kicker || (props.item.status ? 'CURRENTLY BUILDING' : '')
+    )
     function handleClick(e) {
       if (props.item.url === 'treasure') {
         e.preventDefault()
         emit('open-treasure')
       }
     }
-    return { titleLines, stackTags, handleClick }
+    return { titleLines, stackTags, showKicker, handleClick }
   }
 }
 </script>

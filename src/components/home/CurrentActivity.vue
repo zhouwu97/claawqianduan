@@ -1,7 +1,7 @@
 <template>
-  <div class="utility">
+  <div class="utility" :class="{ 'in-view': active }">
     <div class="utility-head"><strong>最近在做</strong><span>now</span></div>
-    <div class="now" v-for="(item, i) in items" :key="i">
+    <div class="now" v-for="(item, i) in items" :key="i" :style="{ '--d': (120 + i * 70) + 'ms' }">
       <div class="now-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path :d="item.icon"/></svg>
       </div>
@@ -16,6 +16,9 @@
 
 <script>
 export default {
-  props: ['items']
+  props: {
+    items: { type: Array, default: () => [] },
+    active: { type: Boolean, default: false },
+  }
 }
 </script>

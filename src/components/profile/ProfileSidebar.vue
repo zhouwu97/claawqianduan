@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import ProfileIdentity from './ProfileIdentity.vue'
 import ProfileTags from './ProfileTags.vue'
 import SocialLinks from './SocialLinks.vue'
@@ -49,12 +49,16 @@ import MusicDock from './MusicDock.vue'
 
 export default {
   components: { ProfileIdentity, ProfileTags, SocialLinks, MusicDock },
-  props: ['configdata', 'currentSong', 'isPlaying'],
+  props: {
+    configdata: { type: Object, default: () => ({}) },
+    currentSong: { type: Object, default: null },
+    isPlaying: { type: Boolean, default: false },
+    activeNav: { type: String, default: 'top' },
+  },
   emits: ['open-settings', 'open-about', 'toggle-play', 'prev', 'next', 'open-music', 'scroll-to', 'clear-screen'],
   setup(props, { emit }) {
-    const activeNav = ref('top')
     const navIndex = computed(() => {
-      const idx = ['top', 'projects', 'skills'].indexOf(activeNav.value)
+      const idx = ['top', 'projects', 'skills'].indexOf(props.activeNav)
       return idx >= 0 ? idx : 0
     })
 
@@ -68,11 +72,10 @@ export default {
     })
 
     function go(id) {
-      activeNav.value = id
       emit('scroll-to', id)
     }
 
-    return { emit, activeNav, navIndex, name, location, tags, socials, githubUrl, go }
+    return { emit, navIndex, name, location, tags, socials, githubUrl, go }
   }
 }
 </script>

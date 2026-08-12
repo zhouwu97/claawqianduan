@@ -1,6 +1,6 @@
 <template>
   <v-app class="app-root">
-    <transition name="fade">
+    <transition name="fade" @after-leave="startIntro">
       <div class="loading" v-show="isloading">
         <loader></loader>
       </div>
@@ -9,11 +9,11 @@
     <video v-if="videosrc" autoplay loop muted class="video-bg" id="bg-video" ref="videoEl">
       <source :src="videosrc" type="video/mp4">
     </video>
-    <div class="page-bg" :class="{ intro: !visited && !isClearScreen, 'clear-mode': isClearScreen }"></div>
+    <div class="page-bg" :class="{ intro: introActive, 'clear-mode': isClearScreen }"></div>
     <div class="noise"></div>
 
     <Transition name="clear">
-      <div v-if="!isloading && !isClearScreen" class="layout" :class="{ intro: !visited && !isClearScreen }">
+      <div v-show="!isloading && !isClearScreen" class="layout" :class="{ intro: introActive }">
       <aside class="rail">
         <ProfileSidebar
           :configdata="configdata"
@@ -30,7 +30,7 @@
         />
       </aside>
 
-      <main class="main-area">
+      <main class="main-area" ref="mainEl">
         <div class="content">
           <HeroIntro :hero-data="heroData" :formatted-time="formattedTime" :formatted-date-short="formattedDateShort" />
 
@@ -40,14 +40,22 @@
 
           <section id="projects">
             <div class="section-head">
-              <div><h3>项目</h3><p>在做的东西，和常去的地方。</p></div>
+              <div>
+                <div class="section-index">02 / PROJECT</div>
+                <h3>项目</h3>
+                <p>在做的东西，和常去的地方。</p>
+              </div>
             </div>
             <ProjectShowcase :projects="displayProjects" :configdata="configdata" @open-treasure="treasureOpen = true" />
           </section>
 
           <section id="skills">
             <div class="section-head">
-              <div><h3>技能与近况</h3><p>常用技术栈，和最近在做的事。</p></div>
+              <div>
+                <div class="section-index">03 / NOW</div>
+                <h3>技能与近况</h3>
+                <p>常用技术栈，和最近在做的事。</p>
+              </div>
             </div>
             <div class="utility-grid">
               <SkillsOverview :skills="skillList" />
@@ -88,7 +96,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useDisplay } from 'vuetify'
 import loader from '../components/loader.vue'
 import ProfileSidebar from '../components/profile/ProfileSidebar.vue'
@@ -112,7 +120,8 @@ const music = useMusicPlayer()
 const { videosrc, selectBackground } = useWallpaper()
 
 const configdata = ref(loadConfig())
-const isloading = ref(false)
+// loader 首帧即显示，禁止 layout 闪现后再盖 loader（FOUC）
+const isloading = ref(true)
 const isClearScreen = ref(false)
 const dialog1 = ref(false)
 const dialog2 = ref(false)
@@ -120,8 +129,23 @@ const tab = ref(null)
 const treasureOpen = ref(false)
 const audioEl = ref(null)
 const videoEl = ref(null)
-// Hero 入场只播放一次（会话内）
-const visited = ref(sessionStorage.getItem('zhouzhou-visited') === '1')
+const mainEl = ref(null)
+/* 持久 visited 与运行时 introActive 分离：
+   - hasVisited：会话内是否看过（不直接当动画状态）
+   - introActive：cinematic intro 实时开关，动画播完即关
+   - 清屏恢复 / 刷新都不会重播 */
+const hasVisited = sessionStorage.getItem('zhouzhou-visited') === '1'
+const introActive = ref(false)
+let introTimer = null
+
+function startIntro() {
+  if (hasVisited) return
+  introActive.value = true
+  sessionStorage.setItem('zhouzhou-visited', '1')
+  clearTimeout(introTimer)
+  // 最长动画 = search 340ms 延迟 + 420ms 时长，留余量
+  introTimer = setTimeout(() => { introActive.value = false }, 900)
+}
 
 const {
   musicinfo, musicinfoLoading, playlistIndex, isPlaying, audioLoading, lyrics, currentSong,
@@ -190,11 +214,39 @@ const displayProjects = computed(() => {
 
 /* ---------- 交互 ---------- */
 function scrollToSection(id) {
-  const target = id === 'top' ? document.querySelector('.main-area') : document.getElementById(id)
-  if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  const main = document.querySelector('.main-area')
+  if (!main) return
+  if (id === 'top') {
+    // .main-area 自身就是滚动容器，直接改其 scrollTop
+    main.scrollTo({ top: 0, behavior: 'smooth' })
+    return
+  }
+  const target = document.getElementById(id)
+  if (!target) return
+  const mainRect = main.getBoundingClientRect()
+  const targetRect = target.getBoundingClientRect()
+  // 明确计算 target 相对 .main-area 的偏移，不依赖浏览器猜滚动祖先
+  main.scrollTo({
+    top: main.scrollTop + targetRect.top - mainRect.top,
+    behavior: 'smooth'
+  })
 }
 
 function openMusicSettings() { dialog1.value = true; tab.value = 'tab-3' }
+
+/* 背景二层 scroll parallax：背景 0.15 速，不跟鼠标，rAF 节流
+   prefers-reduced-motion 下禁用 */
+const prefersReduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+let parallaxRaf = 0
+
+function onMainScroll() {
+  if (prefersReduced) return
+  cancelAnimationFrame(parallaxRaf)
+  parallaxRaf = requestAnimationFrame(() => {
+    const sc = mainEl.value ? mainEl.value.scrollTop : 0
+    document.documentElement.style.setProperty('--bg-parallax', `${Math.round(sc * -0.15)}px`)
+  })
+}
 
 const year = new Date().getFullYear()
 
@@ -210,16 +262,15 @@ watch(isClearScreen, (val) => {
 })
 
 onMounted(async () => {
-  sessionStorage.setItem('zhouzhou-visited', '1')
-  isloading.value = true
   applyMeta(configdata.value)
   applyThemeVars(configdata.value)
   const imageurl = selectBackground(configdata.value, xs.value)
 
   const loadImage = () => {
+    // 预载真正展示的项目图（新 projects 结构，兼容旧字段）
     const imageUrls = [
       configdata.value.avatar,
-      ...(configdata.value.projectcards || []).map(item => item.img)
+      ...displayProjects.value.map(item => item.img).filter(Boolean)
     ]
     return new Promise((resolve) => {
       const imagePromises = imageUrls.map((url) => {
@@ -261,11 +312,18 @@ onMounted(async () => {
   })
 
   registerAudio(audioEl.value)
+  if (mainEl.value) mainEl.value.addEventListener('scroll', onMainScroll, { passive: true })
   try {
     await getMusicInfo(configdata.value)
     setupAudioListener()
   } catch (e) {
     console.log('音乐加载失败', e)
   }
+})
+
+onBeforeUnmount(() => {
+  clearTimeout(introTimer)
+  cancelAnimationFrame(parallaxRaf)
+  if (mainEl.value) mainEl.value.removeEventListener('scroll', onMainScroll)
 })
 </script>

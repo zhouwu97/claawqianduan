@@ -19,7 +19,7 @@ const engineUrls = {
 function isLikelyUrl(input) {
   const str = input.trim()
   if (/^(https?|ftp):\/\//i.test(str)) return true
-  const domainPattern = /^([a-z0-9-]+\.)+[a-z]{2,}(\/.*)?$/i
+  const domainPattern = /^([a-z0-9-]+\.)+[a-z]{2,}(:\d+)?(\/.*)?$/i
   const localPattern = /^(localhost|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(:\d+)?(\/.*)?$/i
   return domainPattern.test(str) || localPattern.test(str)
 }
@@ -39,7 +39,8 @@ export function useSearch() {
     if (isLikelyUrl(query)) {
       let url = query
       if (!/^[a-z]+:\/\//i.test(url)) {
-        url = 'http://' + url
+        // 域名默认 https；localhost/IP 用 http
+        url = /^(localhost|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(:\d+)?/i.test(url) ? 'http://' + url : 'https://' + url
       }
       window.open(url, '_blank')
     } else {

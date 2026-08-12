@@ -73,7 +73,8 @@
     height: 34px;
     padding: 0 12px;
   }
-  .nav-btn.active::before {
+  /* 移动端横向导航不复用桌面 translateY 公式 */
+  .nav-indicator {
     display: none;
   }
   .sidebar-section,
@@ -121,8 +122,15 @@
   .showcase {
     grid-template-columns: 1fr;
   }
+  .showcase::after {
+    display: none;
+  }
   .showcase-visual {
+    margin-left: 0;
     min-height: 180px;
+  }
+  .showcase-visual::before {
+    display: none;
   }
   .showcase-body {
     padding: 24px 22px;

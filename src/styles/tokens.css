@@ -47,6 +47,7 @@
   --shadow-panel: 0 24px 80px rgba(0, 0, 0, 0.34);
   --shadow-card: 0 14px 36px rgba(0, 0, 0, 0.22);
 
-  /* 字体 */
-  --font-sans: Inter, "SF Pro Display", "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  /* 字体：editorial 排版靠 size/weight/tracking 建立层次，不靠花字体 */
+  --font-sans: Inter, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  --font-display: Inter, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
 }

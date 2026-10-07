@@ -1,7 +1,7 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 const read = async (file) => (await readFile(file, "utf8")).replace(/\r\n/g, "\n");
-const [shell, css, app, player, ui, config, seed, entry] = await Promise.all([
+const [shell, css, app, player, ui, config, seed, entry, assistant, pet, motion] = await Promise.all([
   read("src/layouts/HomeShell.vue"),
   read("src/styles/home.css"),
   read("src/homeApp.js"),
@@ -10,6 +10,9 @@ const [shell, css, app, player, ui, config, seed, entry] = await Promise.all([
   read("src/config.js"),
   read("src/music/seed.json"),
   read("index.html"),
+  read("src/assistant.js"),
+  read("src/pet/jingjing-pet.js"),
+  read("src/pet/motion.js"),
 ]);
 let template = shell.match(/<template>\n([\s\S]*?)\n<\/template>/)[1];
 const defaults = (await import("../src/config.js")).site;
@@ -38,7 +41,8 @@ let appCode = clean(app);
 const assets = JSON.parse(await read("src/assets.json"));
 for (const key of Object.keys(assets)) {
   const bytes = await readFile("public" + assets[key]);
-  assets[key] = "data:image/webp;base64," + bytes.toString("base64");
+  const mime = assets[key].endsWith(".png") ? "image/png" : "image/webp";
+  assets[key] = "data:" + mime + ";base64," + bytes.toString("base64");
 }
 appCode = "const ASSETS = " + JSON.stringify(assets) + ";\n" + appCode;
 const head = entry.match(/<head>([\s\S]*?)<\/head>/)[1];
@@ -51,6 +55,9 @@ const script = [
   clean(player),
   "const seed=" + seed.trim() + ";",
   clean(ui),
+  clean(motion),
+  clean(pet),
+  clean(assistant),
   appCode,
   "initHomepage();",
 ].join("\n");

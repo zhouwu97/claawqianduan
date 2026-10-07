@@ -1,0 +1,15 @@
+import { readFile, writeFile, mkdir, copyFile } from 'node:fs/promises';
+import path from 'node:path';
+import { createHash } from 'node:crypto';
+const source = path.resolve(process.argv[2] || '../cw');
+const atlas = await readFile(path.join(source, 'codex/jingjing-spritesheet.png'));
+const info = JSON.parse(await readFile(path.join(source, 'codex/asset-info.json'), 'utf8'));
+if (createHash('sha256').update(atlas).digest('hex') !== info.sha256) throw Error('Atlas does not match asset-info.json');
+const runtime = await readFile(path.join(source, 'web/jingjing-pet.js'), 'utf8');
+await mkdir('src/pet', { recursive: true });
+await mkdir('public/img/assistant', { recursive: true });
+await writeFile('src/pet/jingjing-pet.js', runtime.replace('../shared/motion.js', './motion.js'));
+await copyFile(path.join(source, 'shared/motion.js'), 'src/pet/motion.js');
+await writeFile('public/img/assistant/jingjing.png', atlas);
+await copyFile(path.join(source, 'LICENSE'), 'public/img/assistant/LICENSE');
+console.log('Synced Web pet and verified canonical Codex atlas from ' + source);

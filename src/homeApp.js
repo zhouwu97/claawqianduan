@@ -1,3 +1,4 @@
+import { initAssistant } from "./assistant.js";
 import ASSETS from "./assets.json";
 import { initMusicUI } from "./music/ui.js";
 import { site } from "./config.js";
@@ -677,6 +678,7 @@ export function initHomepage() {
   }
   if (!reducedMotion.matches) schedule();
 
+  const disposeAssistant = initAssistant(ASSETS.assistant);
   applyPreferences();
   $("#videoUrl").value = preferences.video;
 
@@ -687,6 +689,7 @@ export function initHomepage() {
     intervals.forEach(clearInterval);
     observers.forEach((o) => o.disconnect());
     musicUI.dispose();
+    disposeAssistant();
     video.pause();
     document.body.classList.remove(
       "playing",

@@ -247,19 +247,7 @@
           ><span class="interests">普通学生 · 二次元</span>
         </div>
       </div>
-      <div class="clock">
-        <svg class="clock-orbit" viewBox="0 0 180 180" aria-hidden="true">
-          <circle class="orbit-one" cx="90" cy="90" r="74" />
-          <circle class="orbit-two" cx="90" cy="90" r="61" />
-          <path d="M90 10v10M90 160v10M10 90h10M160 90h10" />
-          <g class="orbit-star">
-            <path d="M90 11l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" />
-          </g>
-        </svg>
-        <div class="clock-time" id="clockTime">--:--</div>
-        <div class="clock-date" id="clockDate"></div>
-        <div class="clock-status">大概率还没睡</div>
-      </div>
+
     </section>
     <p class="quote">
       <span id="rotatingQuote">生活不止眼前的代码，还有远方的番剧和奶茶。</span
@@ -284,6 +272,32 @@
         <svg><use href="#i-search" /></svg>
       </button>
     </form>
+    <aside class="home-companion" aria-label="时钟与大肥鱼助手">
+      <div class="clock">
+        <svg class="clock-orbit" viewBox="0 0 180 180" aria-hidden="true">
+          <circle class="orbit-one" cx="90" cy="90" r="74" />
+          <circle class="orbit-two" cx="90" cy="90" r="61" />
+          <path d="M90 10v10M90 160v10M10 90h10M160 90h10" />
+          <g class="orbit-star">
+            <path d="M90 11l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" />
+          </g>
+        </svg>
+        <div class="clock-time" id="clockTime">--:--</div>
+        <div class="clock-date" id="clockDate"></div>
+        <div class="clock-status">大概率还没睡</div>
+      </div>
+      <section class="assistant-card" aria-labelledby="assistantTitle">
+        <header class="assistant-header"><div><span class="assistant-eyebrow">YOUR LITTLE COMPANION</span><h2 id="assistantTitle">大肥鱼 <span>AI 助手</span></h2></div><span class="assistant-online" title="桌宠陪伴中"></span></header>
+        <p class="assistant-description">给认真生活的你，一点摸鱼的陪伴。</p>
+        <div id="petHost"></div>
+        <div class="assistant-footnote"><span>鲸鲸娘</span><span>今天也请多多关照</span></div>
+      </section>
+      <a class="pet-project-link" href="https://github.com/zhouwu97/ds-pet" target="_blank" rel="noopener noreferrer">
+        <svg aria-hidden="true"><use href="#i-github" /></svg>
+        <span><strong>想要大肥鱼更完善，来提交吧</strong><small>ds-pet · Codex / DSH / Web</small></span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    </aside>
     <section class="section" id="projects">
       <div class="section-heading">
         <div class="section-title">
